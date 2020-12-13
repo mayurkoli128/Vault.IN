@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <title>Dashboard</title>
+  </head>
+  <body>
+
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+      <a class="navbar-brand" href="/">Tiny.URL</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black;">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black;">Pricing</a>
+          </li>
+        </ul>
+        <span class="navbar-text">
+          <ul class="navbar-nav mr-auto" style="color: black;">
+            <li class="nav-item">
+              <a href="../auth/logout" style="color: black;text-decoration: unset;"><span style="vertical-align: bottom; " class="material-icons">
+                login
+                </span>LogOut</a>
+            </li>
+           
+          </ul>
+        </span>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+      <div class="col-lg-4">
+        <div class="row">
+          <div class="col-lg-12 offset-lg-0 col-sm-8 offset-sm-2">
+            <div class="img-block">
+              <div class="row">
+                <div class="col-md-8 offset-md-2">
+                  <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                      <div class="">
+                        <img src="https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="No Image" srcset="" class="img-fluid rounded-circle">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="username-block" style="color: rgb(0, 0, 0);">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 offset-lg-0 col-sm-8 offset-sm-2">
+          <div class="user-info table-responsive-md">
+            <table class="table table-sm table-primary table-striped">
+              <thead>
+                <tr>
+                  <th style="font-weight: 500;">Name</th>
+                  <th style="font-weight: normal;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 500;">Email</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 500;">Username</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 500;">URL Count</td>
+                  <td></td>
+                </tr>
+                
+
+              </tbody>
+            </table>
+          </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-lg-8 ">
+        <div class="block url-block" >
+          <div class="row">
+            <div class="col-md-8 offset-md-2 ">
+
+              <form action="/api/links/new" method="post">
+                
+
+                <div class="form-group">
+                  <input type="text" name="originalUrl" class="form-control" id="url" aria-describedby="emailHelp" placeholder="Enter URL">
+                  <small id="in-help" class="form-text text-muted"><p style="font-size: medium; color: rgb(0, 189, 94);">Enter you're long URL to shorten</p></small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="result-link" style="font-size: medium;">
+                    <span style="color: snow;">Shorten URL : </span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>    
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  </body>
+</html>
