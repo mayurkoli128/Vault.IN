@@ -11,7 +11,6 @@ module.exports.auth = function(req, res, next) {
     try {
         const decode = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);
         req.user = decode;
-        console.log(decode);
         next();
     } catch (error) {
         res.status(400).redirect('../auth/login');
@@ -26,7 +25,6 @@ module.exports.forwardAuthenticate = function(req, res, next) {
     try {
         const decode = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);
         req.user = decode;
-        console.log(decode);
         res.status(400).redirect('../users/me');
     } catch (error) {
         next();

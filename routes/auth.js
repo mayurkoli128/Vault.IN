@@ -8,36 +8,47 @@ const {forwardAuthenticate} = require('../middleware/auth');
 
 // @type    POST
 // @route   /api/auth/login
-// @desc    route for user Login using email and password
+// @desc    route for user Login using email and password (page render)
 // @access  PUBLIC 
-
-router.get('/login', [forwardAuthenticate], (req, res) => {
-    res.render('login');
-})
-router.post('/login', async (req, res, next) => {
-    throw new Error('new Error');
+router.get('/login', [forwardAuthenticate],(req, res) => {
+    res.render('login', {
+        error_msg : req.flash('error_msg'), 
+        err : req.flash('error'), 
+        success_msg: req.flash('success_msg'),
+        info: req.flash('info')
+    });
+});
+// @type    POST
+// @route   /api/auth/login
+// @desc    route for user Login using email/username and password
+// @access  PUBLIC 
+router.post('/login', async (req, res) => {
     const {error} = validate(req.body);
     if (error) {
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).render('login', {err: error.details[0].message});
     }
     let user = await User.findOne({email: req.body.email});
     if (!user) {
-        return res.status(400).send('Email or Password is incorrect');
+        return res.status(400).render('login', {err: 'Email or Password is incorrect'});
     } 
     const validatePass = await bcrypt.compare(req.body.password, user.password);
     if (!validatePass) {
-        return res.status(400).send('Email or Password is incorrect');
+        return res.status(400).render('login', {err: 'Email or Password is incorrect'});
     }
-    // const token = jwt.sign({
-    //     // payload...
-    //     id:user.id,
-    //     name: user.name
-    // }, process.env.JWTWEBTOKEN);
-    const maxAge = 600;
+    const maxAge = 24*60*60;
     user = new User(_.pick(user, ['id', 'username', 'email', 'password', 'created_date']));
     const token = user.generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
     res.status(400).redirect('../users/me');
+});
+
+// @type    GET
+// @route   /api/auth/logout
+// @desc    route for user to logout
+// @access  PRIVATE 
+router.get('/logout', (req, res) => {
+    res.cookie('auth_token', "", {maxAge: 1});
+    res.redirect('/');
 });
 
 function validate(user) {

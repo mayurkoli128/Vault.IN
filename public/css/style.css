@@ -8,19 +8,6 @@
     padding: 25px;
 }
 
-.img-block, .user-info {
-    margin-top: 50px;
-    background-color: rgb(0, 204, 143);
-    min-height: 200px;
-    border-radius: 10px;
-}
-.user-info {
-    background-color: rgb(221, 216, 216);
-    border-left : solid 6px steelblue;
-    margin-top: 3px;
-    padding-top: 30px;
-}
-
 .btn-element {
     padding: 10px;
     margin-top: 40px;
@@ -29,19 +16,33 @@
 .btn-element button {
     margin-top: 10px;
 }
-.url-block {
-    background-color: darkslategrey;
+
+input::placeholder {
+    font-size: 0.70em;
 }
-.username-block {
-    background-color: rgb(4, 166, 230);
-    text-align: center;
-    border-radius: 20px;
-    font-weight: 300;
-    font-style: italic;
-    font-size: larger;
+.sidebar-container {
+    position: fixed;
+    width: 200px;
+    height: 100%;
+    top: 56px;
+    left: 0;
+    background-color: rgb(118, 118, 228);
+    color: #fff;
 }
-.result-link {
-    margin-top: 20px;
-    max-height: 100px;
-    text-align: center;
+.sidebar-logo{
+    padding: 20px 20px 20px 30px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
 }
+.sidebar-logo:hover{
+    background-color: rgb(88, 88, 197);
+    color: white;
+}
+
+.sidebar-links {
+    color: white;
+}
+
+.table { display:table; }
+.table-row { display:table-row; }
+.table-cell { display:table-cell; }
