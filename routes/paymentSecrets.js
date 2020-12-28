@@ -28,5 +28,4 @@ router.post('/add', [auth], async(req, res)=> {
     const result = await secret.save();
     res.status(200).send(result);
 });
-
 module.exports = router;

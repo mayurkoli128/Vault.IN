@@ -12,10 +12,8 @@ const {forwardAuthenticate} = require('../middleware/auth');
 // @access  PUBLIC 
 router.get('/login', [forwardAuthenticate],(req, res) => {
     res.render('login', {
-        error_msg : req.flash('error_msg'), 
         err : req.flash('error'), 
         success_msg: req.flash('success_msg'),
-        info: req.flash('info')
     });
 });
 // @type    POST
@@ -29,17 +27,17 @@ router.post('/login', async (req, res) => {
     }
     let user = await User.findOne({email: req.body.email});
     if (!user) {
-        return res.status(400).render('login', {err: 'Email or Password is incorrect'});
+        return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     } 
     const validatePass = await bcrypt.compare(req.body.password, user.password);
     if (!validatePass) {
-        return res.status(400).render('login', {err: 'Email or Password is incorrect'});
+        return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     }
     const maxAge = 24*60*60;
     user = new User(_.pick(user, ['id', 'username', 'email', 'password', 'created_date']));
     const token = user.generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
-    res.status(400).redirect('../users/me');
+    res.status(200).redirect('../users/me');
 });
 
 // @type    GET
@@ -54,7 +52,7 @@ router.get('/logout', (req, res) => {
 function validate(user) {
     const schema = Joi.object({
         email: Joi.string().email().max(255).required(),
-        password: Joi.string().min(6).max(255).required(),
+        password: Joi.string().min(64).required(),
     });
     return schema.validate(user);
 }

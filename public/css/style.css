@@ -16,10 +16,10 @@
 .btn-element button {
     margin-top: 10px;
 }
-
-input::placeholder {
-    font-size: 0.70em;
+input[type] {
+    font-size: 1em;
 }
+
 .sidebar-container {
     position: fixed;
     width: 200px;
@@ -43,6 +43,15 @@ input::placeholder {
     color: white;
 }
 
-.table { display:table; }
-.table-row { display:table-row; }
-.table-cell { display:table-cell; }
+.table-row:hover {
+    cursor: pointer;
+    border-right: 1px solid rgb(0, 68, 255);
+    border-left: 1px solid rgb(4, 0, 255);
+}
+#key {
+    cursor: pointer;
+    float: right;
+}
+#key:hover{
+    opacity: 0.8;
+}

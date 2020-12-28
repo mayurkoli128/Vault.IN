@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const mysql = require('mysql');
 const connection = require('../startup/db');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -24,7 +23,7 @@ class User {
     generateAuthToken = ()=> {
         let token = jwt.sign({
             email: this.email,
-        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: '1d'});
+        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: '1h'});
         return token;
     }
 }

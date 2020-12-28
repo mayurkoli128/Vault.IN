@@ -3,7 +3,7 @@ import {
     findOne, 
     save, 
     remove} 
-from './indexeddb.js';
+from './indexedDB.js';
 
 // pasword hashing/generating digest(hash or ciphertext using sha-256 hashing algo)
 export async function digestMessage(data) {
@@ -22,6 +22,10 @@ export async function genPasswordHash(password) {
 function getDataEncoding(data) {
     const enc = new TextEncoder();
     return enc.encode(data);
+}
+function getDataDecoding(data) {
+    const dec = new TextDecoder('utf-8');
+    return dec.decode(new Uint8Array(data));
 }
 export async function genCryptoKey(password) {
     const passwordInBytes = getDataEncoding(password);
@@ -44,21 +48,40 @@ async function genAesKey(passwordCryptoKey, salt) {
             iterations: 250000,
             hash: {name: 'SHA-256'}
             // which type of key you want to generate {name:'AES-GCM', length: 256}
-        }, passwordCryptoKey, {name:'AES-GCM', length: 256}, false, ['encrypt']
+        }, passwordCryptoKey, {name:'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']
     );
 }
-function uint8ArrayToBase64(binary) {
-    return window.btoa(String.fromCharCode.apply(null, binary));
+export function Uint8ArrayToBase64(data) {
+    return window.btoa(String.fromCharCode.apply(null, data));
 }   
-async function encrypt(message) {
+export function base64ToUint8Array(base64) {
+    var binary_string = window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return new Uint8Array(bytes.buffer);
+}
+export async function decrypt(message) {
+    const salt = base64ToUint8Array(message.substr(0, 44));
+    const iv = base64ToUint8Array(message.substr(44, 16));
+    const ciphertext = base64ToUint8Array(message.substr(60));
+    let passwordCryptoKey = (await getCryptoKey(1)).cryptoObj;
+    const aeskey = await genAesKey(passwordCryptoKey, salt);
+    const plaintext = await crypto.subtle.decrypt({
+        name: "AES-GCM",
+        iv
+    }, aeskey, ciphertext);
+    return (getDataDecoding(plaintext));
+}
+export async function encrypt(message) {
     const dataInBytes = getDataEncoding(message);
     // get weak password crypto key get it from indexedDB if exist
     let passwordCryptoKey = (await getCryptoKey(1)).cryptoObj;
-    console.log(passwordCryptoKey);
     // derive an aes key from passwordKye 
     const salt = crypto.getRandomValues(new Uint8Array(32));
     const aeskey = await genAesKey(passwordCryptoKey, salt);
-    console.log(aeskey);
     // generate iv for data encryption....
     const iv = crypto.getRandomValues(new Uint8Array(12));
     // generate encrypted data using iv+aeskey+datainBytes 
@@ -69,8 +92,8 @@ async function encrypt(message) {
     const encryptedBytes = new Uint8Array(encryptedContent);
 
     //testing
-    const res = uint8ArrayToBase64(encryptedBytes)+uint8ArrayToBase64(iv)+uint8ArrayToBase64(encryptedBytes);
-    res ;
+    const res = Uint8ArrayToBase64(salt)+Uint8ArrayToBase64(iv)+Uint8ArrayToBase64(encryptedBytes);
+    return res ;
 }
 // indexedDB store-CryptoKeys implementation....
 
@@ -103,8 +126,5 @@ async function deleteCryptoKey(key) {
         throw new Error(error);
     }
 }
-
 // CRUD 4) UPDATE
 function updateCryptoKey(key) {}
-
-encrypt('mayur');

@@ -6,14 +6,14 @@ require('dotenv').config();
 module.exports.auth = function(req, res, next) {
     token = req.cookies.auth_token;
     if(!token) {
-        return res.status(400).redirect('../auth/login');
+        return res.status(401).json({ok: false, message: 'Unauthorized'});
     }
     try {
         const decode = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);
         req.user = decode;
         next();
     } catch (error) {
-        res.status(400).redirect('../auth/login');
+        res.status(401).json({ok: false, message: 'Unauthorized'});
     }
 }
 // if token is valid and user trying to login or register render user to dashboard directly...

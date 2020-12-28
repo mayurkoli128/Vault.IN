@@ -61,7 +61,7 @@ export var remove = (db ,store, key) => {
         var transaction = db.transaction([store], "readwrite").objectStore(store);
         const req = transaction.delete(key);
         req.onsuccess = (event) => {
-            console.log(`key deleted from ${store} `);
+            resolve(`key deleted from ${store} `);
         }
         req.onerror = (event) => {
             reject(event.target.error);

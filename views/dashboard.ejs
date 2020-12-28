@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <!-- Google fonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
   <title>Dashboard</title>
 </head>
@@ -42,7 +41,10 @@
             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#user-profile"><span class="material-icons" style="vertical-align: bottom;">
                 account_circle
               </span>Account</a>
-            <a class="dropdown-item" href="../auth/logout"><span class="material-icons" style="vertical-align: bottom;">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#user-settings"><span class="material-icons" style="vertical-align: bottom;">
+                settings
+              </span>Settings</a>
+              <a class="dropdown-item" href="../auth/logout"><span class="material-icons" style="vertical-align: bottom;">
                 power_settings_new
               </span>Logout</a>
           </div>
@@ -64,33 +66,33 @@
         <div class="dropdown-menu">
           <span class="dropdown-item" style="font-size: smaller;">create new</span>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#"  data-toggle="modal" data-target="#addSecret">Record</a>
+          <a class="dropdown-item" href="#"  data-toggle="modal" data-target="#add-secret-modal">Record</a>
           <a class="dropdown-item" href="#"  data-toggle="modal" data-target="#addPaymentSecret">Payment Card</a>
         </div>
       </div>
     </div>
-    <a href="" class="sidebar-links">
+    <a href="#" class="sidebar-links">
       <div class="sidebar-logo">
         <span class="material-icons" style="vertical-align: bottom;">
           lock
         </span>My Vault
       </div>
     </a>
-    <a href="" class="sidebar-links">
+    <a href="#" class="sidebar-links">
       <div class="sidebar-logo">
         <span class="material-icons" style="vertical-align: bottom;">
           payment
         </span>Payments
       </div>
     </a>
-    <a href="" class="sidebar-links">
+    <a href="#" class="sidebar-links">
       <div class="sidebar-logo">
         <span class="material-icons" style="vertical-align: bottom;">
           security
         </span>SecurityAudit
       </div>
     </a>
-    <a href="" class="sidebar-links">
+    <a href="#" class="sidebar-links">
       <div class="sidebar-logo">
         <span class="material-icons" style="vertical-align: bottom;">
           watch
@@ -100,59 +102,62 @@
   </div>
 
   <!-- Modal for secret -->
-  <div class="modal fade" id="addSecret" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+  <div class="modal fade" id="add-secret-modal" tabindex="-1" role="dialog"
+    aria-labelledby="add-secret" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalScrollableTitle">New Record</h5>
+          <h5 class="modal-title">New Record</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="../secrets/add" method="POST" id="form">
+          <form action="#" id="add-secret">
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
                 <input type="text" placeholder="Enter Title" name="title" id="title"
-                  class="form-control form-control-lg" required />
+                  class="form-control form-control-lg" autocomplete="off" required />
               </div>
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="Enter Your Email or Username" name="login" id="login"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="Enter Your Email or Username" name="login" id="s-login"
+                  class="form-control form-control-lg" autocomplete="off" required />
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
                   else.</small>
               </div>
             </div>
+            
+            <div class="col-lg-10 offset-lg-1">
+              <span class="material-icons" id="key">
+                vpn_key
+              </span>
+              <div class="form-group">
+                <input type="text" name="password" placeholder="Type or Generate Password" id="s-password"
+                  class="form-control form-control-lg" autocomplete="off" required />
+              </div>
+            </div>
+            
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="password" name="password" placeholder="Type or Generate Password" id="password"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="https://" name="website_address" id="s-website_address"
+                  class="form-control form-control-lg" autocomplete="off" required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="https://" name="website_address" id="website_address"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="Keep note" name="note" id="s-note" class="form-control form-control-lg"
+                autocomplete="off" required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="Keep note" name="note" id="note" class="form-control form-control-lg"
-                  required />
+                <input type="submit" name="secretSubmit" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" required />
               </div>
             </div>
-
-            <div class="col-lg-10 offset-lg-1">
-              <div class="form-group">
-                <input type="submit" value="Submit" class="btn btn-primary form-control-lg btn-block" required />
-              </div>
-            </div>
-            </form>
           </form>
         </div>
       </div>
@@ -160,60 +165,81 @@
   </div>
   </div>
 
-  <!-- Modal for payment secret -->
-  <div class="modal fade" id="addPaymentSecret" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+  <!-- Modal for to Show decrypted secret -->
+  <div class="modal fade" id="update-secret-modal" tabindex="-1" role="dialog"
+    aria-labelledby="add-secret" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalScrollableTitle">New Payment Card</h5>
+          <h5 class="modal-title">Record (ReadOnly)</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="#" method="POST" id="form">
+          <form action="#" method="#" id="update-secret">
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="Enter Title" name="title" id="title"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="Enter Title" name="title" id="u-title"
+                  class="form-control form-control-lg" autocomplete="off" readonly required />
               </div>
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="Enter Your Email or Username" name="email" id="Email"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="Enter Your Email or Username" name="login" id="u-login"
+                  class="form-control form-control-lg" autocomplete="off" readonly required />
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
                   else.</small>
               </div>
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="password" name="password" placeholder="Type or Generate Password" id="password"
-                  class="form-control form-control-lg" required />
+                <input type="password" name="password" placeholder="Type or Generate Password" id="u-password"
+                  class="form-control form-control-lg" autocomplete="off" readonly required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="https://" name="address" id="address"
-                  class="form-control form-control-lg" required />
+                <input type="text" placeholder="https://" name="website_address" id="u-website_address"
+                  class="form-control form-control-lg" autocomplete="off" readonly required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="text" placeholder="Keep note" name="note" id="note" class="form-control form-control-lg"
-                  required />
+                <input type="text" placeholder="Keep note" name="note" id="u-note" class="form-control form-control-lg"
+                autocomplete="off" readonly required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="submit" value="Submit" class="btn btn-primary form-control-lg btn-block" required />
+                <input type="submit" name="secretSubmit" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" disabled required />
               </div>
             </div>
-            </form>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+  <!-- Modal for payment secret -->
+  <div class="modal fade" id="addPaymentSecret" tabindex="-1" role="dialog"
+    aria-labelledby="add-paymentCard" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="add-paymentCard">New Payment Card</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="#" method="POST" id="payment">
+            
           </form>
         </div>
       </div>
@@ -223,11 +249,11 @@
 
   <!-- Model for user profile -->
   <div class="modal fade" id="user-profile" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    aria-labelledby="profile" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalScrollableTitle">Account</h5>
+          <h5 class="modal-title" id="profile">Account</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -238,6 +264,44 @@
       </div>
     </div>
   </div>
+  </div>
+
+    <!-- Model for user settings -->
+    <div class="modal fade" id="user-settings" tabindex="-1" role="dialog"
+    aria-labelledby="user-settings" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="user-settings">Security</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<!-- Modal for secrete deletion -->
+  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="container">
     <div class="row">
@@ -250,19 +314,11 @@
               <th scope="col">RECORD ID</th>
               <th scope="col">TITLE</th>
               <th scope="col">LAST MODIFIED</th>
+              <th scope="col"></th>
             </tr>
           </thead>
-          <tbody>
-            <%
-              secrets.forEach((secret)=> { %>
-              <tr  onclick="chala();">
-                <th scope="row"><%= secret.id %></th>
-                <td><span class="material-icons" style="vertical-align: bottom;">
-                  text_snippet
-                </span><%= secret.title %></td>
-                <td><%= secret.last_modified.slice(0, -22) %>-<%= user.username%></td>
-              </tr>
-            <%});%>
+          <tbody id="all-secrets">
+           
           </tbody>
         </table>
         </div>
@@ -270,13 +326,14 @@
     </div>
   </div>
   <script>
-    function chala() {
-    console.log(this);
-}
+    function set(id) {
+      console.log(id);
+    }   
   </script>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="/js/secret.js" type="module"></script>
+  <script src="/js/passwordGenerator.js" type="module"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
@@ -289,3 +346,4 @@
 </body>
 
 </html>
+                      <!-- <div class="dropdown-divider"></div> -->

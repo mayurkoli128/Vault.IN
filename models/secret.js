@@ -1,7 +1,4 @@
-const Joi = require('joi');
-const mysql = require('mysql');
 const connection = require('../startup/db');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 class Secret {
@@ -34,13 +31,20 @@ Secret.findOne = (val)=> {
         });
     });
 }
-Secret.find = ()=> {
+Secret.delete = (id)=> {
     return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM SECRET`;
+        const query = `DELETE FROM SECRET WHERE id = "${id}"`;
         connection.query(query, (err, result)=>{
-            if (err)    reject(new Error('Something failed (Record searching) :'+err));
+            if (err)    reject(new Error('Something failed (Record Deletion) :'+err));
             else resolve(result);
         });
     });
+}
+// client-side validation is required, data is encrypted completely!
+Secret.validate = (secret)=>{
+    const schema = {
+        
+    };
+    return Joi.validate(secret, schema);
 }
 module.exports = Secret;

@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const Secret = require('../models/secret');
 const {auth, forwardAuthenticate} = require('../middleware/auth');
-const { conforms } = require('lodash');
 
 // @type    GET
 // @route   /api/users/me
@@ -13,6 +12,9 @@ const { conforms } = require('lodash');
 // @access  PUBLIC 
 router.get('/me', [auth],async (req, res)=> {
     const user = await User.findOne({email:req.user.email});
+    if (!user) {
+        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
+    }
     const secrets = await Secret.findOne({user_id: user.id});
     // fetching all the records & ecnrypt them....
     res.status(200).render('dashboard', {
@@ -39,21 +41,21 @@ router.post('/register', async(req, res) => {
     let user = await User.findOne({email: req.body.email});
     
     if(user) {
-        return res.status(400).render('register', {err: 'Sorry! That email address already exist'});
+        return res.status(409).render('register', {err: 'Sorry! That email address already exist'});
     }
     // make sure that username is unique..
     user = await User.findOne({username: req.body.username});
     
     if(user) {
-        return res.status(400).render('register', {err: 'Sorry! Username already taken.'});
+        return res.status(409).render('register', {err: 'Sorry! Username already taken.'});
     }
     //if valid create user object.
-    user = new User(_.pick(req.body, ['username', 'email', 'password', 'created_date']));
+    user = new User(_.pick(req.body, ['username', 'email', 'password']));
     //create hash of password.
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.password, salt);
     //insert into database
-    const temp = await user.save();
+    await user.save();
     //send user object in response (use lodash for selecting properties of user)
 
     // send json web token in response...
@@ -61,8 +63,7 @@ router.post('/register', async(req, res) => {
     let token = user.generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
      res
-         .status(200)
-         .redirect('register');
+        .status(200)
+        .redirect('../auth/login');
 });
-
 module.exports = router;

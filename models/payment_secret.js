@@ -1,7 +1,4 @@
-const Joi = require('joi');
-const mysql = require('mysql');
 const connection = require('../startup/db');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 class PaymentSecret {
