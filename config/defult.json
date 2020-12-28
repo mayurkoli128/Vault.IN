@@ -6,4 +6,4 @@
     "DB_USER":"user",
     "DB_PASS":"pass",
     "COOKIE_DECRYPT_SECRETE" : "unsecured_key"
-  }
+}

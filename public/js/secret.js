@@ -7,7 +7,7 @@ form.addEventListener('submit', async(event)=> {
   let secret = {};
   for ( var i = 0; i < form.elements.length; i++) {
       var e = form.elements[i];
-      if (e.name === 'secretSubmit') continue ;
+      if (e.type === 'submit') continue ;
       if (e.name === 'title'){ secret[e.name] = e.value;continue;}
       secret[e.name] = await encrypt(e.value);
   }
@@ -33,19 +33,39 @@ form.addEventListener('submit', async(event)=> {
   xhr.send(secret);
 });
 
-// show secret
-// window.decrypt = async function(id, secret) {
-//   const form = document.getElementById('update-secret');
-//   // form.reset();
-//   for ( var i = 0; i < form.elements.length; i++) {
-//           var e = form.elements[i];
-//       if (e.name === 'secretSubmit') continue ;
-//       if (e.name === 'title') 
-//           e.value = secret[e.name];
-//       else e.value = await decrypt(secret[e.name]);
-//   }
-// }
-// delete secret
+
+window.decryptSecret = function(id) {
+  const spinner = document.getElementById('spinner-'+id);
+  spinner.style.visibility="visible";
+
+  const  xhr = new XMLHttpRequest(), method="GET", url = `../secrets/${id}`;
+  xhr.open(method, url, true);
+  xhr.onreadystatechange = async ()=> {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      const status = xhr.status;
+      if (status === 0 || (status >= 200 && status < 400)) {
+        const res = JSON.parse(xhr.responseText);
+        if (res.ok) {
+          const secret = res.secret[0];
+          const form = document.getElementById('update-secret');
+          for ( var i = 0; i < form.elements.length; i++) {
+            var e = form.elements[i];
+            if (e.type === 'submit') continue ;
+            if (e.name === 'title'){ e.value = secret[e.name];continue;}
+            e.value = await decrypt(secret[e.name]);
+          }
+        }
+        $('#update-secret-modal').modal('show');
+        spinner.style.visibility="hidden";
+      } else {
+        console.log(xhr.responseText);
+      }
+    }
+  }
+  xhr.onerror=()=> {};
+  xhr.send();
+}
+
 window.deleteSecret = function(id) {
   const  xhr = new XMLHttpRequest(), method="DELETE", url = `../secrets/${id}`;
   xhr.open(method, url, true);
@@ -75,9 +95,12 @@ window.viewVault = function() {
           if (res.ok) {
             let all="", secrets = res.secrets;
             secrets.forEach((secret)=> {
-              all += `<tr class="table-row" onclick="set(this.id)" id= "${secret.id}">
+              all += `<tr class="table-row">
                       <th scope="row">${secret.id}</th>
-                      <td data-toggle="modal" data-target="#update-secret-modal" ><span class="material-icons" style="vertical-align: bottom;">text_snippet</span>${secret.title}</td>
+                      <td onclick="decryptSecret(this.id)" id= "${secret.id}">
+                      <i class="fas fa-spinner fa-spin fa-2x" id="spinner-${secret.id}" style="visibility: hidden;"></i>
+                      <span class="material-icons" style="vertical-align: bottom;">text_snippet</span>
+                      ${secret.title}</td>
                       <td>${secret.last_modified.slice(0, -22)}</td>
                       <td>
                       <div class="btn-group">
@@ -85,8 +108,8 @@ window.viewVault = function() {
                           more_vert
                         </span>
                         <div class="dropdown-menu">
-                          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#updateSecret">Show</a>
-                          <a class="dropdown-item" href="#" onclick="deleteSecret(this.name);" data-toggle="modal" data-target="#confirm-delet" name=${secret.id}>Delete</a>
+                          <a class="dropdown-item">Show</a>
+                          <a class="dropdown-item" onclick="deleteSecret(this.name);" data-toggle="modal" data-target="#confirm-delet" name=${secret.id}>Delete</a>
                         </div>
                       </div>
                     </td>
