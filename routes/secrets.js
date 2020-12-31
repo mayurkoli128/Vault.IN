@@ -60,4 +60,16 @@ router.delete('/:id', [auth], async(req, res)=> {
     await Secret.delete(req.params.id);
     res.status(200).json({ok: true, message: 'Deleted', secret: secret});
 });
+
+router.patch('/:id',[auth], async (req, res)=> {
+    const user = await User.findOne({email: req.user.email});
+    if (!user) {
+        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
+    }
+    const secret = await Secret.findOne({id: req.params.id});
+    if (!secret) 
+        return res.status(404).json({ok: false, message:'Not Found'});
+    const result = await Secret.findAndModify(req.params.id, req.body);
+    res.send(result);
+});
 module.exports = router;

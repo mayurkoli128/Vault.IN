@@ -40,6 +40,15 @@ Secret.delete = (id)=> {
         });
     });
 }
+Secret.findAndModify = (id, secret)=> {
+    return new Promise((resolve, reject)=>{
+        const query = `UPDATE SECRET SET ? WHERE id = "${id}"`;
+        connection.query(query, secret, (err, result)=>{
+            if (err)    reject(new Error('Something failed (Record Updation) :'+err));
+            else resolve(result);
+        });
+    });
+}
 // client-side validation is required, data is encrypted completely!
 Secret.validate = (secret)=>{
     const schema = {

@@ -5,13 +5,11 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
   <link rel="stylesheet" href="/css/style.css">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <!-- Google fonts -->
+ 
+    <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
   <title>Dashboard</title>
 </head>
@@ -139,7 +137,7 @@
                   class="form-control form-control-lg" autocomplete="off" required />
               </div>
             </div>
-            
+
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
                 <input type="text" placeholder="https://" name="website_address" id="s-website_address"
@@ -154,7 +152,7 @@
               </div>
             </div>
 
-            <div class="col-lg-10 offset-lg-1">
+            <div class="col-lg-10 offset-lg-1  modal-footer">
               <div class="form-group">
                 <input type="submit" name="secretSubmit" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" required />
               </div>
@@ -168,57 +166,68 @@
 
   <!-- Modal for to Show decrypted secret -->
   <div class="modal fade" id="update-secret-modal" tabindex="-1" role="dialog"
-    aria-labelledby="add-secret" aria-hidden="true">
+    aria-labelledby="update-secret" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Record (ReadOnly)</h5>
+          <h5 class="modal-title" id="head-id" style="display: none;">Details</h5>
+          <h5 class="modal-title">Details</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="#" method="#" id="update-secret">
+          <form action="#" id="update-secret">
+
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
+                <label for="u-title" class="fs1">TITLE</label>
                 <input type="text" placeholder="Enter Title" name="title" id="u-title"
-                  class="form-control form-control-lg" autocomplete="off" readonly required />
+                  class="form-control form-control-lg" autocomplete="off"  required />
               </div>
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
+                <label for="u-login" class="fs1">LOGIN</label>
                 <input type="text" placeholder="Enter Your Email or Username" name="login" id="u-login"
-                  class="form-control form-control-lg" autocomplete="off" readonly required />
+                  class="form-control form-control-lg" autocomplete="off"  required />
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
                   else.</small>
               </div>
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
+                <span class="material-icons" id="key">
+                  vpn_key
+                </span>
+                <label for="u-password" class="fs1">PASSWORD</label>
                 <input type="password" name="password" placeholder="Type or Generate Password" id="u-password"
-                  class="form-control form-control-lg" autocomplete="off" readonly required />
+                  class="form-control form-control-lg" autocomplete="off"  required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
+                <label for="u-website_address" class="fs1">WEBSITE ADDRESS</label>
                 <input type="text" placeholder="https://" name="website_address" id="u-website_address"
-                  class="form-control form-control-lg" autocomplete="off" readonly required />
+                  class="form-control form-control-lg" autocomplete="off"  required />
               </div>
             </div>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
+                <label for="u-note" class="fs1">NOTE</label>
                 <input type="text" placeholder="Keep note" name="note" id="u-note" class="form-control form-control-lg"
-                autocomplete="off" readonly required />
+                autocomplete="off"  required />
               </div>
             </div>
 
-            <div class="col-lg-10 offset-lg-1">
+            <div class="col-lg-10 offset-lg-1 modal-footer">
               <div class="form-group">
-                <input type="submit" name="secretSubmit" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" disabled required />
+                <input type="submit" id="secretUpdate" name="secretUpdate" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" disabled required />
               </div>
             </div>
+
           </form>
         </div>
       </div>
@@ -278,7 +287,26 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="font-size: smaller;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md">
+                <div class="custom-control custom-switch top7">
+                  <input type="checkbox" class="custom-control-input" id="2fa" onclick="twoFAuth(this)">
+                  <label class="custom-control-label" for="2fa">ACTIVATE TWO-FACTOR AUTHENTICATION</label>
+                </div>
+                <div class="custom-control custom-switch top7">
+                  <input type="checkbox" class="custom-control-input" id="shortLogin" onclick="shortLogin(this)">
+                  <label class="custom-control-label" for="shortLogin">ACTIVATE SHORTLOGIN</label>
+                </div>
+                <div class="custom-control custom-switch top7">
+                  <input type="checkbox" class="custom-control-input" id="autoLogout" onclick="autoLogout(this)">
+                  <label class="custom-control-label" for="autoLogout"></label>ACTIVATE AUTO-LOGOUT</br>Discontinue me after <input type="number" name="select" value="0" id="auto-logout-counter" min="0" max="60" disabled> <b>min</b> </label>
+                </div>
+                <button type="button" class="btn btn-danger btn-lg btn-block top30" style="font-size: 1.3em;">CHANGE MASTER PASSWORD</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -326,19 +354,39 @@
       </div>
     </div>
   </div>
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+ 
+  <!-- messages Modal -->
+  <div class="modal fade bd-example-modal-sm " id="messages"  tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header btn-danger">
+          <span class="material-icons">
+            timer
+            </span>
+          TIMER HAS STARTED
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <div id="loader" style="visibility: hidden;">
+    <i class="fas fa-spinner fa-pulse fa-4x loader"></i>
+    <div id="loading-mask"><div id="loading-bar-spinner"><div class="spinner-icon"></div></div></div>
+  </div>
+
   <script src="/js/secret.js" type="module"></script>
   <script src="/js/passwordGenerator.js" type="module"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+  <script src="/js/loader.js" type="module"></script>
+  <script src="/js/userSetting.js" type="module"></script>
+
+  <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 </body>
 
 </html>

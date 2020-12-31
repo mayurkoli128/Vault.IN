@@ -23,7 +23,7 @@ class User {
     generateAuthToken = ()=> {
         let token = jwt.sign({
             email: this.email,
-        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: '1h'});
+        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: '1d'});
         return token;
     }
 }

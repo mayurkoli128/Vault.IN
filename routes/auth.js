@@ -48,7 +48,6 @@ router.get('/logout', (req, res) => {
     res.cookie('auth_token', "", {maxAge: 1});
     res.redirect('/');
 });
-
 function validate(user) {
     const schema = Joi.object({
         email: Joi.string().email().max(255).required(),

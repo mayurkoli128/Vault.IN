@@ -8,6 +8,7 @@ const session = require('express-session');
 const users = require('./routes/users');
 const auth = require('./routes/auth');
 const secrets = require('./routes/secrets');
+const settings = require('./routes/userSettings');
 const home = require('./routes/home');
 require('dotenv').config();
 
@@ -39,6 +40,7 @@ app.use('/', home);
 app.use('/api/auth/', auth);
 app.use('/api/users/', users);
 app.use('/api/secrets/', secrets);
+app.use('/api/settings/', settings);
 app.use(error);
 
 app.listen(8080, ()=> {

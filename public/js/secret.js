@@ -1,12 +1,13 @@
 import {encrypt, decrypt} from './index.js';
+import {stopSpinner, startSpinner} from './loader.js';
 
 // add secret
-let form = document.getElementById('add-secret');
-form.addEventListener('submit', async(event)=> {
+let insertForm = document.getElementById('add-secret');
+insertForm.addEventListener('submit', async(event)=> {
   event.preventDefault();
   let secret = {};
-  for ( var i = 0; i < form.elements.length; i++) {
-      var e = form.elements[i];
+  for ( var i = 0; i < insertForm.elements.length; i++) {
+      var e = insertForm.elements[i];
       if (e.type === 'submit') continue ;
       if (e.name === 'title'){ secret[e.name] = e.value;continue;}
       secret[e.name] = await encrypt(e.value);
@@ -14,7 +15,7 @@ form.addEventListener('submit', async(event)=> {
   secret = JSON.stringify(secret);
   const  xhr = new XMLHttpRequest(), method="POST", url = "../secrets/add";
   xhr.open(method, url, true);
-  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.onreadystatechange = ()=> {
       // In local files, status is 0 upon success in Mozilla Firefox
       if(xhr.readyState === XMLHttpRequest.DONE) {
@@ -22,43 +23,42 @@ form.addEventListener('submit', async(event)=> {
         if (status === 1 || (status >= 200 && status < 400)) {
           // The request has been completed successfully
           document.getElementsByClassName('close')[0].click();
-          form.reset();
+          insertForm.reset();
           viewVault();
         } else {
           // Oh no! There has been an error with the request!
-          throw new Error('Something failed [SECRET-INSERTION]: '+xhr.responseText);
+          window.location='../auth/logout/';
         }
       }
   };
   xhr.send(secret);
 });
 
-
+// show-update secret
+let rwForm = document.getElementById('update-secret');
 window.decryptSecret = function(id) {
-  const spinner = document.getElementById('spinner-'+id);
-  spinner.style.visibility="visible";
-
+  startSpinner();
+  document.getElementById('head-id').innerHTML=id;
   const  xhr = new XMLHttpRequest(), method="GET", url = `../secrets/${id}`;
   xhr.open(method, url, true);
   xhr.onreadystatechange = async ()=> {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       const status = xhr.status;
+      const res = JSON.parse(xhr.responseText);
       if (status === 0 || (status >= 200 && status < 400)) {
-        const res = JSON.parse(xhr.responseText);
         if (res.ok) {
           const secret = res.secret[0];
-          const form = document.getElementById('update-secret');
-          for ( var i = 0; i < form.elements.length; i++) {
-            var e = form.elements[i];
+          for ( var i = 0; i < rwForm.elements.length; i++) {
+            var e = rwForm.elements[i];
             if (e.type === 'submit') continue ;
             if (e.name === 'title'){ e.value = secret[e.name];continue;}
             e.value = await decrypt(secret[e.name]);
           }
         }
+        stopSpinner();
         $('#update-secret-modal').modal('show');
-        spinner.style.visibility="hidden";
       } else {
-        console.log(xhr.responseText);
+        window.location='../auth/logout/';
       }
     }
   }
@@ -66,23 +66,29 @@ window.decryptSecret = function(id) {
   xhr.send();
 }
 
+// delete secret
 window.deleteSecret = function(id) {
+  startSpinner();
   const  xhr = new XMLHttpRequest(), method="DELETE", url = `../secrets/${id}`;
   xhr.open(method, url, true);
   xhr.onreadystatechange = ()=> {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       const status = xhr.status;
       if (status === 0 || (status >= 200 && status < 400)) {
+        stopSpinner();
         viewVault();
       } else {
-        console.log(xhr.responseText);
+        window.location='../auth/logout/';
       }
     }
   }
   xhr.onerror=()=> {};
   xhr.send();
 }
+
+// view complete vault
 window.viewVault = function() {
+  startSpinner();
   const  xhr = new XMLHttpRequest(), method="GET", url = "../secrets/";
   xhr.open(method, url, true);
   xhr.onreadystatechange = ()=> {
@@ -98,7 +104,6 @@ window.viewVault = function() {
               all += `<tr class="table-row">
                       <th scope="row">${secret.id}</th>
                       <td onclick="decryptSecret(this.id)" id= "${secret.id}">
-                      <i class="fas fa-spinner fa-spin fa-2x" id="spinner-${secret.id}" style="visibility: hidden;"></i>
                       <span class="material-icons" style="vertical-align: bottom;">text_snippet</span>
                       ${secret.title}</td>
                       <td>${secret.last_modified.slice(0, -22)}</td>
@@ -108,7 +113,7 @@ window.viewVault = function() {
                           more_vert
                         </span>
                         <div class="dropdown-menu">
-                          <a class="dropdown-item">Show</a>
+                          <a class="dropdown-item" name="${secret.id}" onclick="decryptSecret(this.name)">Show</a>
                           <a class="dropdown-item" onclick="deleteSecret(this.name);" data-toggle="modal" data-target="#confirm-delet" name=${secret.id}>Delete</a>
                         </div>
                       </div>
@@ -117,10 +122,10 @@ window.viewVault = function() {
             });
             const tbody = document.getElementById('all-secrets');
             tbody.innerHTML = all;
-          }
+            stopSpinner();
+          } 
         } else {
-          // Oh no! There has been an error with the request!
-          throw new Error('Something failed [SECRET-FETCHING]'+ xhr.responseText);
+          window.location='../auth/logout/';
         }
       }
   };
@@ -129,3 +134,41 @@ window.viewVault = function() {
 }
 viewVault();
 
+let assing_id=-1;
+rwForm.addEventListener('submit', async (event)=> {
+  event.preventDefault();
+  let secret = {};
+  for ( var i = 0; i < rwForm.elements.length; i++) {
+      var e = rwForm.elements[i];
+      if (e.type === 'submit') continue ;
+      if (e.name === 'title'){ secret[e.name] = e.value;continue;}
+      secret[e.name] = await encrypt(e.value);
+  }
+  secret = JSON.stringify(secret);
+  const  xhr = new XMLHttpRequest(), method="PATCH", url = `../secrets/${assing_id}`;
+  xhr.open(method, url, true);
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.onreadystatechange = ()=> {
+      // In local files, status is 0 upon success in Mozilla Firefox
+      if(xhr.readyState === XMLHttpRequest.DONE) {
+        var status = xhr.status;
+        if (status === 1 || (status >= 200 && status < 400)) {
+          // The request has been completed successfully
+          console.log(xhr.responseText);
+          document.getElementsByClassName('close')[1].click();
+          viewVault();
+        } else {
+          // Oh no! There has been an error with the request!
+          window.location='../auth/logout/';
+          console.log(xhr.responseText);
+        }
+      }
+  };
+  xhr.send(secret);
+});
+rwForm.addEventListener('input', ()=> {
+  const obj = document.getElementById('secretUpdate');
+  obj.disabled = false;
+  assing_id = parseInt (document.getElementById('head-id').innerHTML);
+  obj.value = "SAVE CHANGES";
+});
