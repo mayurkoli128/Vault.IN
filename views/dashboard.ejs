@@ -101,7 +101,7 @@
   </div>
 
   <!-- Modal for to add secret -->
-  <div class="modal fade" id="add-secret-modal" tabindex="-1" role="dialog"
+  <div class="modal" id="add-secret-modal" tabindex="-1" role="dialog"
     aria-labelledby="add-secret" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
@@ -129,13 +129,17 @@
             </div>
             
             <div class="col-lg-10 offset-lg-1">
-              <span class="material-icons" id="key">
+              <span class="material-icons key">
                 vpn_key
               </span>
               <div class="form-group">
-                <input type="text" name="password" placeholder="Type or Generate Password" id="s-password"
+                <input type="password" name="password" placeholder="Type or Generate Password" id="s-password"
                   class="form-control form-control-lg" autocomplete="off" required />
+                  <span class="material-icons field-icon">
+                    visibility
+                    </span>
               </div>
+              
             </div>
 
             <div class="col-lg-10 offset-lg-1">
@@ -171,13 +175,13 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="head-id" style="display: none;">Details</h5>
-          <h5 class="modal-title">Details</h5>
+          <h5 class="modal-title">Details (ReadOnly)</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="#" id="update-secret">
+          <form action="#" id="update-secret" disabled>
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
@@ -197,12 +201,15 @@
             </div>
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <span class="material-icons" id="key">
+                <span class="material-icons key">
                   vpn_key
                 </span>
                 <label for="u-password" class="fs1">PASSWORD</label>
                 <input type="password" name="password" placeholder="Type or Generate Password" id="u-password"
                   class="form-control form-control-lg" autocomplete="off"  required />
+                  <span class="material-icons field-icon">
+                    visibility
+                    </span>
               </div>
             </div>
 
@@ -222,9 +229,12 @@
               </div>
             </div>
 
-            <div class="col-lg-10 offset-lg-1 modal-footer">
+            <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
-                <input type="submit" id="secretUpdate" name="secretUpdate" value="Submit" class="btn btn-primary form-control-lg btn-block" autocomplete="off" disabled required />
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary form-control-lg" data-dismiss="modal">Close</button>
+                  <input type="submit" id="secretUpdate" name="secretUpdate" value="SAVE CHANGES" class="btn form-control-lg btn-primary" autocomplete="off" disabled required />
+                </div>
               </div>
             </div>
 
@@ -237,7 +247,7 @@
 
 
   <!-- Modal for payment secret -->
-  <div class="modal fade" id="addPaymentSecret" tabindex="-1" role="dialog"
+  <div class="modal" id="addPaymentSecret" tabindex="-1" role="dialog"
     aria-labelledby="add-paymentCard" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
@@ -258,7 +268,7 @@
   </div>
 
   <!-- Model for user profile -->
-  <div class="modal fade" id="user-profile" tabindex="-1" role="dialog"
+  <div class="modal" id="user-profile" tabindex="-1" role="dialog"
     aria-labelledby="profile" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
@@ -269,7 +279,7 @@
           </button>
         </div>
         <div class="modal-body">
-
+          
         </div>
       </div>
     </div>
@@ -277,7 +287,7 @@
   </div>
 
     <!-- Model for user settings -->
-    <div class="modal fade" id="user-settings" tabindex="-1" role="dialog"
+  <div class="modal" id="user-settings" tabindex="-1" role="dialog"
     aria-labelledby="user-settings" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
@@ -296,7 +306,7 @@
                   <label class="custom-control-label" for="2fa">ACTIVATE TWO-FACTOR AUTHENTICATION</label>
                 </div>
                 <div class="custom-control custom-switch top7">
-                  <input type="checkbox" class="custom-control-input" id="shortLogin" onclick="shortLogin(this)">
+                  <input type="checkbox" class="custom-control-input" id="shortLogin" onclick="shortLogin(this)" disabled>
                   <label class="custom-control-label" for="shortLogin">ACTIVATE SHORTLOGIN</label>
                 </div>
                 <div class="custom-control custom-switch top7">
@@ -313,8 +323,48 @@
   </div>
   </div>
 
+<!-- Modal for qrcode to show  -->
+
+  <div class="modal" id="qrcode-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="text-align: center;">Activate Two-Factor authentication</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md">
+                
+                <div class="qrcode-box">
+                  <img class="img-fluid" id="qrcode" src="" alt="QR-Code" srcset="">
+                  <form id="activate-2fa">
+                    <div class="form-group d-flex justify-content-center">
+                      <input type="text" class="form-control w-50" id="passcode" aria-describedby="passcodeHelp" placeholder="6-digit code" name="userToken" autocomplete="off">
+                    </div>
+                    <small id="passcodeHelp"></small>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary" >ACTIVATE</button>
+                    </div>
+                  </form>
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
 <!-- Modal for secrete deletion -->
-  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -359,11 +409,11 @@
   <div class="modal fade bd-example-modal-sm " id="messages"  tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
-        <div class="modal-header btn-danger">
+        <div class="modal-header btn-success">
           <span class="material-icons">
             timer
             </span>
-          TIMER HAS STARTED
+            Your short-login has activated!
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -377,10 +427,33 @@
     <div id="loading-mask"><div id="loading-bar-spinner"><div class="spinner-icon"></div></div></div>
   </div>
 
+  <script type="text/javascript">
+    let eye = document.getElementsByClassName('field-icon');
+    eye[0].addEventListener('click', ()=> {
+      if (eye[0].innerHTML == 'visibility') {
+        eye[0].innerHTML = 'visibility_off';
+        document.getElementById('s-password').type="text";
+      } else {
+        eye[0].innerHTML = 'visibility';
+        document.getElementById('s-password').type="password";
+      }
+    });
+    eye[1].addEventListener('click', ()=> {
+      if (eye[1].innerHTML == "visibility") {
+        eye[1].innerHTML = "visibility_off";
+        document.getElementById('u-password').type="text";
+      } else {
+        eye[1].innerHTML = "visibility";
+        document.getElementById('u-password').type="password";
+      }
+    });
+  </script>
   <script src="/js/secret.js" type="module"></script>
   <script src="/js/passwordGenerator.js" type="module"></script>
   <script src="/js/loader.js" type="module"></script>
   <script src="/js/userSetting.js" type="module"></script>
+  <script src="/js/autoLogout.js" type="module"></script>
+  <script src="/js/twoFactorAuth.js" type="module"></script>
 
   <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -390,4 +463,4 @@
 </body>
 
 </html>
-                      <!-- <div class="dropdown-divider"></div> -->
+<!-- <div class="dropdown-divider"></div> -->

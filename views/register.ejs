@@ -15,6 +15,7 @@
       integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
 
     <title>register</title>
@@ -63,6 +64,9 @@
                     class="form-control form-control-lg" autocomplete="off"
                     required
                   />
+                  <span class="material-icons field-icon">
+                    visibility
+                    </span>
                 </div>
               </div>
 
@@ -76,6 +80,9 @@
                     class="form-control form-control-lg" autocomplete="off"
                     required
                   />
+                  <span class="material-icons field-icon">
+                    visibility
+                    </span>
                 </div>
               </div>
 
@@ -107,6 +114,24 @@
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script>
+      let eye = document.getElementsByClassName('field-icon');
+      eye[0].addEventListener('click', ()=> {
+        if (eye[0].innerHTML == "visibility") {
+          eye[0].innerHTML = "visibility_off";
+        } else {
+          eye[0].innerHTML = "visibility";
+        }
+      });
+      eye[1].addEventListener('click', ()=> {
+        if (eye[1].innerHTML == "visibility") {
+          eye[1].innerHTML = "visibility_off";
+        } else {
+          eye[1].innerHTML = "visibility";
+        }
+      });
+    </script>
     <script src="/js/register.js" type="module"></script>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

@@ -50,7 +50,7 @@ window.decryptSecret = function(id) {
           const secret = res.secret[0];
           for ( var i = 0; i < rwForm.elements.length; i++) {
             var e = rwForm.elements[i];
-            if (e.type === 'submit') continue ;
+            if (e.type === 'submit' || e.type === 'button') continue ;
             if (e.name === 'title'){ e.value = secret[e.name];continue;}
             e.value = await decrypt(secret[e.name]);
           }
@@ -78,7 +78,8 @@ window.deleteSecret = function(id) {
         stopSpinner();
         viewVault();
       } else {
-        window.location='../auth/logout/';
+        console.log(xhr.responseText);
+        // window.location='../auth/logout/';
       }
     }
   }
@@ -106,7 +107,7 @@ window.viewVault = function() {
                       <td onclick="decryptSecret(this.id)" id= "${secret.id}">
                       <span class="material-icons" style="vertical-align: bottom;">text_snippet</span>
                       ${secret.title}</td>
-                      <td>${secret.last_modified.slice(0, -22)}</td>
+                      <td>${secret.last_modified.slice(0, -22)}-${res.username}</td>
                       <td>
                       <div class="btn-group">
                         <span class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -134,6 +135,7 @@ window.viewVault = function() {
 }
 viewVault();
 
+/// update only modified fields...
 let assing_id=-1;
 rwForm.addEventListener('submit', async (event)=> {
   event.preventDefault();
@@ -154,9 +156,10 @@ rwForm.addEventListener('submit', async (event)=> {
         var status = xhr.status;
         if (status === 1 || (status >= 200 && status < 400)) {
           // The request has been completed successfully
-          console.log(xhr.responseText);
           document.getElementsByClassName('close')[1].click();
           viewVault();
+          const obj = document.getElementById('secretUpdate');
+          obj.disabled = true;
         } else {
           // Oh no! There has been an error with the request!
           window.location='../auth/logout/';

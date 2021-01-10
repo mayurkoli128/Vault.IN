@@ -15,7 +15,7 @@ router.get('/',[auth], async (req, res)=> {
         return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
     }
     const secrets = await Secret.findOne({user_id: user.id});
-    res.status(200).json({ok: true, message: '', secrets:secrets});
+    res.status(200).json({ok: true, message: '', secrets:secrets, username: user.username});
 });
 router.get('/:id', [auth], async (req, res)=> {
     const user = await User.findOne({email: req.user.email});

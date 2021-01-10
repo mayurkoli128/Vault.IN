@@ -12,10 +12,9 @@ class User {
     }
     save = ()=>{
         return new Promise((resolve, reject)=> {
-            console.log(this);
             const query = `INSERT INTO USER SET ?`
             connection.query(query, this, (err, result)=> {
-                if (err)    reject(new Error('Something failed (Record Insertion) :'+err));
+                if (err)    reject(new Error('Something failed [Record Insertion] :'+err));
                 resolve (result);
             });
         });
@@ -32,7 +31,7 @@ User.findOne = (val)=> {
     return new Promise((resolve, reject)=>{
         const query = `SELECT * FROM USER WHERE ${filter} = "${val[filter]}"`;
         connection.query(query, (err, result)=>{
-            if (err)    reject(new Error('Something failed (Record searching) :'+err));
+            if (err)    reject(new Error('Something failed [Record searching] :'+err));
             else resolve(result[0]);
         });
     });
@@ -41,11 +40,12 @@ User.find = ()=> {
     return new Promise((resolve, reject)=>{
         const query = `SELECT * FROM USER`;
         connection.query(query, (err, result)=>{
-            if (err)    reject(new Error('Something failed (Record searching) :'+err));
+            if (err)    reject(new Error('Something failed [Record searching] :'+err));
             else resolve(result);
         });
     });
 }
+
 User.validate = (user)=>{
     const schema = {
         username: Joi.string().min(3).max(255).required(),

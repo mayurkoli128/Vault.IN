@@ -6,6 +6,7 @@ const User = require('../models/user');
 const Secret = require('../models/secret');
 const {auth, forwardAuthenticate} = require('../middleware/auth');
 
+
 // @type    GET
 // @route   /api/users/me
 // @desc    route for to get currently login user

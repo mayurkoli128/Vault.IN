@@ -48,12 +48,13 @@ input[type] {
     border-right: 1px solid rgb(0, 68, 255);
     border-left: 1px solid rgb(4, 0, 255);
 }
-#key {
+.key {
+    user-select: none;
     cursor: pointer;
     float: right;
 }
-#key:hover{
-    opacity: 0.8;
+.key:hover{
+    opacity: 0.6;
 }
 .top5 { margin-top:5px; }
 .top7 { margin-top:7px; }
@@ -85,3 +86,21 @@ input[type] {
     top: 0px;
     left: 0px;
 }  
+.field-icon {
+    user-select: none;
+    float: right;
+    margin-left: -36px;
+    margin-top: -36px;
+    margin-right: 4px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+.qrcode-box {
+    user-select: none;
+    text-align:center;
+}
+.qrcode-box #qrcode {
+    height: 300px;
+    width: 300px;
+}

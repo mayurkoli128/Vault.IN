@@ -98,10 +98,10 @@ export async function encrypt(message) {
 // indexedDB store-CryptoKeys implementation....
 
 // CRUD 1) CREATE:
-async function storeCryptoKey(cryptObj) {
+async function storeCryptoKey(cryptoObj) {
     try {
         const db = await connect({dbName:'keyDB', dbVersion:1, store: {name: 'crypto_key', key: 'id'}})
-        await save(db, 'crypto_key', {id: 1, cryptoObj: cryptObj});
+        await save(db, 'crypto_key', {id: 1, cryptoObj: cryptoObj});
     } catch (error) {
         throw new Error(error);        
     }
