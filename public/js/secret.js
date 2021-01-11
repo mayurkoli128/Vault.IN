@@ -68,6 +68,7 @@ window.decryptSecret = function(id) {
 
 // delete secret
 window.deleteSecret = function(id) {
+  if (!confirm('Are you sure you want to delete the secret permanently, Continue ?')) return ;
   startSpinner();
   const  xhr = new XMLHttpRequest(), method="DELETE", url = `../secrets/${id}`;
   xhr.open(method, url, true);
@@ -79,7 +80,7 @@ window.deleteSecret = function(id) {
         viewVault();
       } else {
         console.log(xhr.responseText);
-        // window.location='../auth/logout/';
+        window.location='../auth/logout/';
       }
     }
   }
@@ -142,7 +143,7 @@ rwForm.addEventListener('submit', async (event)=> {
   let secret = {};
   for ( var i = 0; i < rwForm.elements.length; i++) {
       var e = rwForm.elements[i];
-      if (e.type === 'submit') continue ;
+      if (e.type === 'submit' || e.type === 'button') continue ;
       if (e.name === 'title'){ secret[e.name] = e.value;continue;}
       secret[e.name] = await encrypt(e.value);
   }
@@ -163,7 +164,6 @@ rwForm.addEventListener('submit', async (event)=> {
         } else {
           // Oh no! There has been an error with the request!
           window.location='../auth/logout/';
-          console.log(xhr.responseText);
         }
       }
   };

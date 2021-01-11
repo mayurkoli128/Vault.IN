@@ -21,28 +21,51 @@ class Secret {
         });
     }
 }
-Secret.findOne = (val)=> {
-    var filter = Object.getOwnPropertyNames(val)[0];
+Secret.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM SECRET WHERE ${filter} = "${val[filter]}"`;
+        let query=`SELECT * FROM SECRET WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record searching) :'+err));
             else resolve(result);
         });
     });
 }
-Secret.delete = (id)=> {
+Secret.delete = (filters)=> {
     return new Promise((resolve, reject)=>{
-        const query = `DELETE FROM SECRET WHERE id = "${id}"`;
+        let query=`DELETE FROM SECRET WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record Deletion) :'+err));
             else resolve(result);
         });
     });
 }
-Secret.findAndModify = (id, secret)=> {
+Secret.findAndModify = (filters, secret)=> {
     return new Promise((resolve, reject)=>{
-        const query = `UPDATE SECRET SET ? WHERE id = "${id}"`;
+        let query=`UPDATE SECRET SET ? WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, secret, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record Updation) :'+err));
             else resolve(result);

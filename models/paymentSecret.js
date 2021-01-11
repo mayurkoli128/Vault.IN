@@ -26,7 +26,15 @@ class PaymentSecret {
 PaymentSecret.findOne = (val)=> {
     var filter = Object.getOwnPropertyNames(val)[0];
     return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM PAYMENT_SECRET WHERE ${filter} = "${val[filter]}"`;
+        let query=`SELECT * FROM PAYMENT_SECRET WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record searching)'+err));
             else resolve(result[0]);

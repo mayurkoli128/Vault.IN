@@ -7,21 +7,15 @@ const _ = require('lodash');
 
 // @type    GET
 // @route   /api/secret/mine
-// @desc    route for user to show his all his secrets(page render)
+// @desc    route for user to show his all secrets(page render)
 // @access  PRIVATE 
 router.get('/',[auth], async (req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+    const user = req.user;
     const secrets = await Secret.findOne({user_id: user.id});
-    res.status(200).json({ok: true, message: '', secrets:secrets, username: user.username});
+    
+    res.status(200).json({ok: true, message: 'Success', secrets:secrets, username: user.username});
 });
 router.get('/:id', [auth], async (req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
     const secret = await Secret.findOne({id: req.params.id});
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
@@ -33,10 +27,7 @@ router.get('/:id', [auth], async (req, res)=> {
 // @desc    route for user to add new secret
 // @access  PRIVATE  
 router.post('/add', [auth], async(req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+    const user = req.user;
     const secret = new Secret(
         _.pick(req.body, ["title", "login", "password", "website_address", "note"])
     );
@@ -50,26 +41,18 @@ router.post('/add', [auth], async(req, res)=> {
 // @desc    route for user to add new secret
 // @access  PRIVATE
 router.delete('/:id', [auth], async(req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
     const secret = await Secret.findOne({id: req.params.id});
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
-    await Secret.delete(req.params.id);
+    await Secret.delete({id: req.params.id});
     res.status(200).json({ok: true, message: 'Deleted', secret: secret});
 });
 
 router.patch('/:id',[auth], async (req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
     const secret = await Secret.findOne({id: req.params.id});
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
-    const result = await Secret.findAndModify(req.params.id, req.body);
+    const result = await Secret.findAndModify({id: req.params.id}, req.body);
     res.send(result);
 });
 module.exports = router;

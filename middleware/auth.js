@@ -1,32 +1,53 @@
 
 const jwt = require('jsonwebtoken');
+const UserSetting = require('../models/userSetting');
+const User = require('../models/user');
 require('dotenv').config();
 
+
 // if user trying to get private routes authenticate the route first then allow user to enter in
-module.exports.auth = function(req, res, next) {
+module.exports.auth = async function(req, res, next, omitSecondFactor=false) {
     token = req.cookies.auth_token;
     if(!token) {
         return res.status(401).json({ok: false, message: 'Unauthorized'});
     }
     try {
-        const decode = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);
-        req.user = decode;
-        next();
+        const {email, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
+        const user = await User.findOne({email: email});
+
+        if (!user) {
+            return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
+        }
+        const twofaSetting = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+        if (!omitSecondFactor && twofaSetting && !is2faAuthenticated) {
+            return res.status(206).json({ok: false, message: 'Unauthorized'});
+        } 
+        req.user = user;
+        return next();
     } catch (error) {
-        res.status(401).json({ok: false, message: 'Unauthorized'});
+        return next(error);
     }
 }
 // if token is valid and user trying to login or register render user to dashboard directly...
-module.exports.forwardAuthenticate = function(req, res, next) {
+module.exports.forwardAuthenticate = async function(req, res, next) {
     token = req.cookies.auth_token;
     if(!token) {
-        next();
+        return next();
     }
     try {
-        const decode = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);
-        req.user = decode;
-        res.status(400).redirect('../users/me');
+        const {email, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
+        const user = await User.findOne({email: email});
+
+        if (!user) {
+            return next();
+        }
+        const twofaSetting = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+        if (twofaSetting && !is2faAuthenticated) {
+            return next();
+        } 
+        req.user = user;
+        return res.status(206).redirect('../users/me');
     } catch (error) {
-        next();
+        return next(error);
     }
 }

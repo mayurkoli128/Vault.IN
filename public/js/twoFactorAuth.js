@@ -7,7 +7,7 @@ function activate2FA() {
     $('#qrcode-modal').modal('show');
     document.getElementById('passcode').style.borderColor='rgb(145, 143, 143)';
     document.getElementById('passcodeHelp').innerText="";
-    const  xhr = new XMLHttpRequest(), method="GET", url = `../settings/totp/generate`;
+    const  xhr = new XMLHttpRequest(), method="GET", url = `../settings/2fa/generate`;
     xhr.open(method, url, true);
     xhr.onreadystatechange = ()=> {
         if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -24,14 +24,13 @@ function activate2FA() {
     xhr.send();
 }
 function deactivate2FA() {
-    const  xhr = new XMLHttpRequest(), method="DELETE", url = `../settings/totp/2fa`;
+    const  xhr = new XMLHttpRequest(), method="DELETE", url = `../settings/2fa/2fa`;
     xhr.open(method, url, true);
     xhr.onreadystatechange = ()=> {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             const status = xhr.status;
             if (status === 0 || (status >= 200 && status < 400)) {
                 const res = JSON.parse(xhr.responseText);
-                console.log(res);
             } 
         }
     }
@@ -50,7 +49,7 @@ window.twoFAuth = (obj)=> {
 let form2fa = document.getElementById('activate-2fa');
 form2fa.addEventListener('submit', (event)=> {
     event.preventDefault();
-    const  xhr = new XMLHttpRequest(), method="POST", url = `../settings/totp/verify`;
+    const  xhr = new XMLHttpRequest(), method="POST", url = `../settings/2fa/verify`;
     let passcode_msg = document.getElementById('passcodeHelp');
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -60,8 +59,10 @@ form2fa.addEventListener('submit', (event)=> {
             const status = xhr.status;
             if (status === 0 || (status >= 200 && status < 400)) {
                 const res = JSON.parse(xhr.responseText);
-                $('#qrcode-modal').modal('hide');
-                resetState();
+                if (res.ok) {
+                    $('#qrcode-modal').modal('hide');
+                    resetState();
+                }
             } else {
                 const res = JSON.parse(xhr.responseText);
                 passcode_msg.style.color = 'red';

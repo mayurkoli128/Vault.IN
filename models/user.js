@@ -19,17 +19,26 @@ class User {
             });
         });
     }
-    generateAuthToken = ()=> {
+    generateAuthToken = (is2faAuthenticated=false)=> {
+        const expiresIn = 60 * 60; // an hour
         let token = jwt.sign({
             email: this.email,
-        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: '1d'});
+            is2faAuthenticated: is2faAuthenticated,
+        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: expiresIn});
         return token;
     }
 }
-User.findOne = (val)=> {
-    var filter = Object.getOwnPropertyNames(val)[0];
+User.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM USER WHERE ${filter} = "${val[filter]}"`;
+        let query=`SELECT * FROM USER WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed [Record searching] :'+err));
             else resolve(result[0]);

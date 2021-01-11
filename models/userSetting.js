@@ -24,19 +24,34 @@ class UserSettings {
         });
     }
 }
-UserSettings.findOne = (val)=> {
-    var filter = Object.getOwnPropertyNames(val)[0];
+UserSettings.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM USER_SETTINGS WHERE ${filter} = "${val[filter]}"`;
+        let query=`SELECT * FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('SOMETHING FAILED [USER_SETTINGS, RECORD_SEARCHING] :'+err));
             else resolve(result);
         });
     });
 }
-UserSettings.delete = (name)=> {
+UserSettings.delete = (filters)=> {
     return new Promise((resolve, reject)=>{
-        const query = `DELETE FROM USER_SETTINGS WHERE name = "${name}"`;
+        let query=`DELETE FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
+        for (const [key, value] of Object.entries(filters)) {
+            len--;
+            if (len!=0) {
+                query += `${key} = "${value}"&&`;
+            } else {
+                query += `${key} = "${value}"`;
+            }
+        }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('SOMETHING FAILED [USER_SETTINGS, RECORD_DELETION] :'+err));
             else resolve(result);

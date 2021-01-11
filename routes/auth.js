@@ -3,7 +3,9 @@ const router = express.Router();
 const _ = require('lodash');
 const Joi = require('joi');
 const User = require('../models/user');
+const UserSetting = require('../models/userSetting');
 const bcrypt = require('bcryptjs');
+const {auth} = require('../middleware/auth');
 const {forwardAuthenticate} = require('../middleware/auth');
 
 // @type    POST
@@ -33,10 +35,15 @@ router.post('/login', async (req, res) => {
     if (!validatePass) {
         return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     }
-    const maxAge = 24*60*60;
-    user = new User(_.pick(user, ['id', 'username', 'email', 'password', 'created_date']));
-    const token = user.generateAuthToken();
+    const maxAge = 60*60;
+    const token = new User(user).generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
+    // check if user has 2fa activated or not ...
+
+    const twofaAuth = await UserSetting.findOne({user_id: user.id, name: "2fa"});
+    if (twofaAuth[0]) {
+        return res.status(206).redirect('../settings/2fa/authenticate');
+    }
     res.status(200).redirect('../users/me');
 });
 
@@ -44,7 +51,7 @@ router.post('/login', async (req, res) => {
 // @route   /api/auth/logout
 // @desc    route for user to logout
 // @access  PRIVATE 
-router.get('/logout', (req, res) => {
+router.get('/logout', [auth],(req, res) => {
     res.cookie('auth_token', "", {maxAge: 1});
     res.redirect('/');
 });

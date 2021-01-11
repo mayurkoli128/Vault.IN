@@ -12,10 +12,7 @@ const {auth, forwardAuthenticate} = require('../middleware/auth');
 // @desc    route for to get currently login user
 // @access  PUBLIC 
 router.get('/me', [auth],async (req, res)=> {
-    const user = await User.findOne({email:req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+    const user = req.user;
     const secrets = await Secret.findOne({user_id: user.id});
     // fetching all the records & ecnrypt them....
     res.status(200).render('dashboard', {
@@ -60,7 +57,7 @@ router.post('/register', async(req, res) => {
     //send user object in response (use lodash for selecting properties of user)
 
     // send json web token in response...
-    let maxAge = 24*60*60;
+    let maxAge = 60*60;
     let token = user.generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
      res

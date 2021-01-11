@@ -6,12 +6,10 @@ const User = require('../models/user');
 const _ = require('lodash');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
+const UserSettings = require('../models/userSetting');
 
 router.post('/', [auth],async(req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+    const user = req.user;
     if (!req.body) {
         return res.status(400).json({ok: false, message: 'Bad request'});
     }
@@ -22,15 +20,12 @@ router.post('/', [auth],async(req, res)=> {
 });
 
 router.get('/', [auth], async(req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+    const user = req.user;
     const result = await UserSetting.findOne({user_id: user.id});
     res.status(200).json({ok: true, message: "", settings: result});
 });
 
-router.get('/totp/generate', async(req, res)=> {
+router.get('/2fa/generate', async(req, res)=> {
     const secret = speakeasy.generateSecret({
         name: "keeper"
     });
@@ -38,12 +33,8 @@ router.get('/totp/generate', async(req, res)=> {
     res.status(200).json({ok: true, message: "Success", qrcode: qrcode_img, base32secret: secret.base32});
 });
 
-router.post('/totp/verify', [auth], async(req, res)=> {
-    console.log(req.body);
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
-    }
+router.post('/2fa/verify', [auth], async(req, res)=> {
+    const user = req.user;
     if (!req.body) {
         return res.status(400).json({ok: false, message: 'Bad request'});
     }
@@ -58,15 +49,42 @@ router.post('/totp/verify', [auth], async(req, res)=> {
     let setting = new UserSetting(_.pick(req.body, ["name", "type", "value_int", "value_str"]));
     setting.user_id = user.id;
     await setting.save();
+    let maxAge = 60*60;
+    let token = new User(user).generateAuthToken(true);
+    res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
     res.status(200).json({ok: true, message: "Success"});
 });
 
-router.delete('/totp/:setting', [auth], async (req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    if (!user) {
-        return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
+router.get('/2fa/authenticate', async(req, res, next)=>{await auth(req, res, next, true)}, (req, res)=> {
+    res.status(206).render('2fa');
+});
+router.post('/2fa/authenticate', async(req, res, next)=>{await auth(req, res, next, true)}, async(req, res)=> {
+    const user = req.user;
+    const secret = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+    if (!req.body) {
+        return res.status(400).json({ok: false, message: 'Bad request'});
     }
-    const result = await UserSetting.delete(req.params.setting);
+    let verified = speakeasy.totp.verify({ secret: secret.value_str,
+        encoding: 'base32',
+        token: req.body.userToken });
+
+    if (!verified) {
+        return res.status(403).render("2fa", {err: "Syncronization failed"});
+    }
+    let maxAge = 60*60;
+    let token = new User(user).generateAuthToken(true);
+    res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
+    res.status(200).redirect('../../users/me');
+});
+
+router.delete('/2fa/:setting', [auth], async (req, res)=> {
+    const user = req.user;
+    let result = await UserSettings.findOne({name: req.params.setting, user_id: user.id});
+    if (!result[0]) {
+        return res.status(400).json({ok: false, message: '2fa has not activated'});
+    }
+    await UserSetting.delete({name: req.params.setting, user_id: user.id});
     res.status(200).json({ok: true, message: 'unset', result: result});
 });
 module.exports = router;
+
