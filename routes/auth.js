@@ -35,12 +35,15 @@ router.post('/login', async (req, res) => {
     if (!validatePass) {
         return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     }
-    const maxAge = 60*60;
+    let maxAge = 60*60;
+    const twofaAuth = await UserSetting.findOne({user_id: user.id, name: "2fa"});
+    if (twofaAuth[0]) {
+        maxAge = 2*60;
+    }
     const token = new User(user).generateAuthToken();
     res.cookie('auth_token', token, {httpOnly: true, maxAge: 1000*maxAge});
     // check if user has 2fa activated or not ...
 
-    const twofaAuth = await UserSetting.findOne({user_id: user.id, name: "2fa"});
     if (twofaAuth[0]) {
         return res.status(206).redirect('../settings/2fa/authenticate');
     }

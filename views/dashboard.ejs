@@ -15,6 +15,7 @@
 </head>
 
 <body>
+  <!-- navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-primary sticky-top navbar-default navbar-fixed-top">
     <a class="navbar-brand" href="/">Tiny.URL</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -137,7 +138,7 @@
                   class="form-control form-control-lg" autocomplete="off" required />
                   <span class="material-icons field-icon">
                     visibility
-                    </span>
+                  </span>
               </div>
               
             </div>
@@ -181,7 +182,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="#" id="update-secret" disabled>
+          <form action="#" id="update-secret">
 
             <div class="col-lg-10 offset-lg-1">
               <div class="form-group">
@@ -233,7 +234,7 @@
               <div class="form-group">
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary form-control-lg" data-dismiss="modal">Close</button>
-                  <input type="submit" id="secretUpdate" name="secretUpdate" value="SAVE CHANGES" class="btn form-control-lg btn-primary" autocomplete="off" disabled required />
+                  <input type="submit" id="secretUpdate" name="secretUpdate" value="SAVE CHANGES" class="btn form-control-lg btn-primary" autocomplete="off" disabled />
                 </div>
               </div>
             </div>
@@ -301,19 +302,28 @@
           <div class="container">
             <div class="row">
               <div class="col-md">
+
                 <div class="custom-control custom-switch top7">
                   <input type="checkbox" class="custom-control-input" id="2fa" onclick="twoFAuth(this)">
                   <label class="custom-control-label" for="2fa">ACTIVATE TWO-FACTOR AUTHENTICATION</label>
                 </div>
+
                 <div class="custom-control custom-switch top7">
                   <input type="checkbox" class="custom-control-input" id="shortLogin" onclick="shortLogin(this)" disabled>
                   <label class="custom-control-label" for="shortLogin">ACTIVATE SHORTLOGIN</label>
                 </div>
+
+                <div class="custom-control custom-switch top7">
+                  <input type="checkbox" class="custom-control-input" id="decryption" checked> 
+                  <label class="custom-control-label" for="decryption">DECRYPTION</label>
+                </div>
+
                 <div class="custom-control custom-switch top7">
                   <input type="checkbox" class="custom-control-input" id="autoLogout" onclick="autoLogout(this)">
                   <label class="custom-control-label" for="autoLogout"></label>ACTIVATE AUTO-LOGOUT</br>Discontinue me after <input type="number" name="select" value="0" id="auto-logout-counter" min="0" max="60" disabled> <b>min</b> </label>
                 </div>
-                <button type="button" class="btn btn-danger btn-lg btn-block top30" style="font-size: 1.3em;">CHANGE MASTER PASSWORD</button>
+
+                <button type="button" class="btn btn-danger btn-lg btn-block top30" style="font-size: 1.3em;"  data-toggle="modal" data-target="#change-pass-modal">CHANGE MASTER PASSWORD</button>
               </div>
             </div>
           </div>
@@ -338,7 +348,6 @@
           <div class="container">
             <div class="row">
               <div class="col-md">
-                
                 <div class="qrcode-box">
                   <img class="img-fluid" id="qrcode" src="" alt="QR-Code" srcset="">
                   <form id="activate-2fa">
@@ -352,8 +361,6 @@
                     </div>
                   </form>
                 </div>
-                
-
               </div>
             </div>
           </div>
@@ -363,25 +370,48 @@
     </div>
   </div>
 
-<!-- Modal for secrete deletion -->
-  <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Model for to change password -->
+   <div class="modal" id="change-pass-modal" tabindex="-1" role="dialog"
+    aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
+          <h5 class="modal-title" id="profile">Change Password</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <div class="alert alert-warning" role="alert">
+            <span class="material-icons" style="vertical-align: bottom;">
+              warning
+              </span>
+            Please note that these operation may take time.(up to your data size)
+          </div>
+
+          <form class="form-inline" id="change-password-form" action="#">
+            <div class="form-group">
+              <label for="c-password">Password</label>
+              <input type="password" id="c-password" class="form-control mx-sm-3" aria-describedby="passwordHelpInline" required>
+            </div>
+            <div class="form-group top22">
+              <label for="c-confirm-password">Confirm Password</label>
+              <input type="password" id="c-confirm-password" class="form-control mx-sm-3" aria-describedby="passwordHelpInline" required>
+              <span style="color: red; font-size: 12px; visibility: hidden;" id="not-match-warn" >
+                Mismatch
+              </span> 
+            </div>
+            <button type="submit" class="btn btn-success btn-lg btn-block top30" id="change-pass-button" style="font-size: 1.3em;">
+              CHANGE IT
+            </button>
+          </form>
+          
         </div>
       </div>
     </div>
   </div>
+  </div>
+<!-- list of user secrets -->
   <div class="container">
     <div class="row">
       <div class="col-md-12 offset-md-1">
@@ -454,6 +484,7 @@
   <script src="/js/userSetting.js" type="module"></script>
   <script src="/js/autoLogout.js" type="module"></script>
   <script src="/js/twoFactorAuth.js" type="module"></script>
+  <script src="/js/changeMasterPassword.js" type="module"></script>
 
   <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

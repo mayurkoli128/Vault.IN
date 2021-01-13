@@ -27,13 +27,10 @@ class UserSettings {
 UserSettings.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
         let query=`SELECT * FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('SOMETHING FAILED [USER_SETTINGS, RECORD_SEARCHING] :'+err));
@@ -44,13 +41,10 @@ UserSettings.findOne = (filters)=> {
 UserSettings.delete = (filters)=> {
     return new Promise((resolve, reject)=>{
         let query=`DELETE FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('SOMETHING FAILED [USER_SETTINGS, RECORD_DELETION] :'+err));

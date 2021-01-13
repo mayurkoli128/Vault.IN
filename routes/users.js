@@ -10,7 +10,7 @@ const {auth, forwardAuthenticate} = require('../middleware/auth');
 // @type    GET
 // @route   /api/users/me
 // @desc    route for to get currently login user
-// @access  PUBLIC 
+// @access  PRIVATE 
 router.get('/me', [auth],async (req, res)=> {
     const user = req.user;
     const secrets = await Secret.findOne({user_id: user.id});
@@ -30,6 +30,13 @@ router.get('/me', [auth],async (req, res)=> {
 router.get('/register', [forwardAuthenticate], (req, res)=> {
     res.render('register');
 });
+router.patch('/edit-account/password', [auth], async(req, res)=> {
+    let user = req.user;
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(req.body.password, salt);
+    await User.findAndModify({id: user.id}, {password: password});
+    res.status(200).json({ok: true, message: 'Password reset successfully'});;
+}); 
 router.post('/register', async(req, res) => {
     const {error} = User.validate(req.body);
     if(error) {

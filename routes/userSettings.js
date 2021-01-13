@@ -84,7 +84,7 @@ router.delete('/2fa/:setting', [auth], async (req, res)=> {
         return res.status(400).json({ok: false, message: '2fa has not activated'});
     }
     await UserSetting.delete({name: req.params.setting, user_id: user.id});
-    res.status(200).json({ok: true, message: 'unset', result: result});
+    res.status(200).json({ok: true, message: 'Unset', result: result});
 });
 module.exports = router;
 

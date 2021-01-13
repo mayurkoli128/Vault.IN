@@ -24,13 +24,10 @@ class Secret {
 Secret.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
         let query=`SELECT * FROM SECRET WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record searching) :'+err));
@@ -41,13 +38,10 @@ Secret.findOne = (filters)=> {
 Secret.delete = (filters)=> {
     return new Promise((resolve, reject)=>{
         let query=`DELETE FROM SECRET WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record Deletion) :'+err));
@@ -58,13 +52,10 @@ Secret.delete = (filters)=> {
 Secret.findAndModify = (filters, secret)=> {
     return new Promise((resolve, reject)=>{
         let query=`UPDATE SECRET SET ? WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, secret, (err, result)=>{
             if (err)    reject(new Error('Something failed (Record Updation) :'+err));

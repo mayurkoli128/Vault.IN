@@ -19,11 +19,11 @@ export async function genPasswordHash(password) {
 }
 // generating derived key for encryption/decryption....
 
-function getDataEncoding(data) {
+export function getDataEncoding(data) {
     const enc = new TextEncoder();
     return enc.encode(data);
 }
-function getDataDecoding(data) {
+export function getDataDecoding(data) {
     const dec = new TextDecoder('utf-8');
     return dec.decode(new Uint8Array(data));
 }
@@ -40,7 +40,7 @@ export async function genCryptoKey(password) {
     deleteCryptoKey(1);
     storeCryptoKey(cryptoKey);
 }
-async function genAesKey(passwordCryptoKey, salt) {
+export async function genAesKey(passwordCryptoKey, salt) {
     return await crypto.subtle.deriveKey(
         {
             name:"PBKDF2",
@@ -98,7 +98,7 @@ export async function encrypt(message) {
 // indexedDB store-CryptoKeys implementation....
 
 // CRUD 1) CREATE:
-async function storeCryptoKey(cryptoObj) {
+export async function storeCryptoKey(cryptoObj) {
     try {
         const db = await connect({dbName:'keyDB', dbVersion:1, store: {name: 'crypto_key', key: 'id'}})
         await save(db, 'crypto_key', {id: 1, cryptoObj: cryptoObj});
@@ -107,7 +107,7 @@ async function storeCryptoKey(cryptoObj) {
     }
 }
 // CRUD 2) READ
-async function getCryptoKey(key) {
+export async function getCryptoKey(key) {
     try {
         const db = await connect({dbName:'keyDB', dbVersion:1, store: {name: 'crypto_key', key: 'id'}});
         const res = await findOne(db, 'crypto_key', key);
@@ -118,7 +118,7 @@ async function getCryptoKey(key) {
 }
 
 // CRUD 3) DELETE
-async function deleteCryptoKey(key) {
+export async function deleteCryptoKey(key) {
     try {
         const db = await connect({dbName:'keyDB', dbVersion:1, store: {name: 'crypto_key', key: 'id'}})
         await remove(db, 'crypto_key', key);

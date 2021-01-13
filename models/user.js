@@ -31,13 +31,10 @@ class User {
 User.findOne = (filters)=> {
     return new Promise((resolve, reject)=>{
         let query=`SELECT * FROM USER WHERE `, len = Object.keys(filters).length;
-        for (const [key, value] of Object.entries(filters)) {
-            len--;
-            if (len!=0) {
-                query += `${key} = "${value}"&&`;
-            } else {
-                query += `${key} = "${value}"`;
-            }
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
         }
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed [Record searching] :'+err));
@@ -54,7 +51,20 @@ User.find = ()=> {
         });
     });
 }
-
+User.findAndModify = (filters, changes)=> {
+    return new Promise((resolve, reject)=>{
+        let query=`UPDATE USER SET ? WHERE `, len = Object.keys(filters).length;
+        if (filters && typeof filters == 'object') {
+            query += Object.keys(filters).map(function (key) {
+                return encodeURIComponent(key) + '="' + (filters[key]) + '"';
+            }).join('&&');
+        }
+        connection.query(query, changes, (err, result)=>{
+            if (err)    reject(new Error('Something failed (Record Updation) :'+err));
+            else resolve(result);
+        });
+    });
+}
 User.validate = (user)=>{
     const schema = {
         username: Joi.string().min(3).max(255).required(),

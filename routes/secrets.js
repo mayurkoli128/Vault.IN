@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
 const Secret = require('../models/secret');
 const {auth} = require('../middleware/auth');
 const _ = require('lodash');
@@ -16,7 +15,8 @@ router.get('/',[auth], async (req, res)=> {
     res.status(200).json({ok: true, message: 'Success', secrets:secrets, username: user.username});
 });
 router.get('/:id', [auth], async (req, res)=> {
-    const secret = await Secret.findOne({id: req.params.id});
+    const user = req.user;
+    const secret =(await Secret.findOne({id: req.params.id, user_id: user.id}))[0];
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
     res.status(200).json({ok: true, message: 'Found', secret: secret});
@@ -41,18 +41,20 @@ router.post('/add', [auth], async(req, res)=> {
 // @desc    route for user to add new secret
 // @access  PRIVATE
 router.delete('/:id', [auth], async(req, res)=> {
-    const secret = await Secret.findOne({id: req.params.id});
+    const user = req.user;
+    const secret = (await Secret.findOne({id: req.params.id, user_id: user.id}))[0];
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
-    await Secret.delete({id: req.params.id});
+    await Secret.delete({id: req.params.id, user_id: user.id});
     res.status(200).json({ok: true, message: 'Deleted', secret: secret});
 });
 
 router.patch('/:id',[auth], async (req, res)=> {
-    const secret = await Secret.findOne({id: req.params.id});
+    const user = req.user;
+    const secret = await Secret.findOne({id: req.params.id, user_id: user.id});
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
-    const result = await Secret.findAndModify({id: req.params.id}, req.body);
+    const result = await Secret.findAndModify({id: req.params.id, user_id: user.id}, req.body);
     res.send(result);
 });
 module.exports = router;
