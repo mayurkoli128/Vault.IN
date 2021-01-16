@@ -1,4 +1,3 @@
-
 export var connect = (dbDef) => {
     return new Promise((resolve, reject) => {
         // Opens a connection to the existing database or creates a new one    

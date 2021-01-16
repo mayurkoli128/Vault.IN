@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
     if (error) {
         return res.status(400).render('login', {err: error.details[0].message});
     }
-    let user = await User.findOne({email: req.body.email});
+    let user = await User.find({email: req.body.email});
     if (!user) {
         return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     } 
@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
         return res.status(401).render('login', {err: 'Email or Password is incorrect'});
     }
     let maxAge = 60*60;
-    const twofaAuth = await UserSetting.findOne({user_id: user.id, name: "2fa"});
+    const twofaAuth = await UserSetting.find({user_id: user.id, name: "2fa"});
     if (twofaAuth[0]) {
         maxAge = 2*60;
     }

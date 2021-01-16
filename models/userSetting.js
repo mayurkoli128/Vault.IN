@@ -24,9 +24,9 @@ class UserSettings {
         });
     }
 }
-UserSettings.findOne = (filters)=> {
+UserSettings.find = (filters, columns=["*"])=> {
     return new Promise((resolve, reject)=>{
-        let query=`SELECT * FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
+        let query=`SELECT ${columns.join(', ')} FROM USER_SETTINGS WHERE `, len = Object.keys(filters).length;
         if (filters && typeof filters == 'object') {
             query += Object.keys(filters).map(function (key) {
                 return encodeURIComponent(key) + '="' + (filters[key]) + '"';

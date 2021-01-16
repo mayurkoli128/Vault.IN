@@ -22,22 +22,15 @@ confirmPassin.addEventListener('input', ()=> {
         document.getElementById('not-match-warn').style.visibility='visible';
     }
 });
+
 function decryptAll(secrets) {
     return Promise.all(secrets.map((secret)=> {
-        return Promise.all(Object.entries(secret).map(([key, value])=> {
-            if (key!=='title' && key!=='id' && key !== 'last_modified' && key !== 'user_id') {
-                return Promise.all([key, decrypt(value)]);
-            } else return [key, value];
-        })).then((v)=> Object.fromEntries(v));
+        return decrypt(secret);
     }));
 }
 function encryptAll(secrets) {
     return Promise.all(secrets.map((secret)=> {
-        return Promise.all(Object.entries(secret).map(([key, value])=> {
-            if (key!=='title' && key!=='id' && key !== 'last_modified' && key !== 'user_id') {
-                return Promise.all([key, encrypt(value)]);
-            } else return [key, value];
-        })).then((v)=> Object.fromEntries(v));
+        return encrypt(secret);
     }));
 }
 function storeSecrets(secrets) {
@@ -54,12 +47,13 @@ changePasswordForm.addEventListener('submit', async (event)=> {
     startSpinner();
     const password = document.getElementById('c-password');
     try {
-        let res = await makeRequest({method: "GET", url: "../secrets/"});
+        let res = await makeRequest({method: "GET", url: "../secrets/all"});
         let secrets = JSON.parse(res).secrets;
         const decryptedData =  await decryptAll(secrets);
         // until now we have all decrypted secrets lets encrypt them using new aes key...
         await genCryptoKey(password.value);
         const encryptedData = await encryptAll(decryptedData);
+        console.log(encryptedData);
         // store all encrypted data...
         res = await storeSecrets(encryptedData);
         // store new password 

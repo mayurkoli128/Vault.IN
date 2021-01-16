@@ -40,12 +40,13 @@ export async function genCryptoKey(password) {
     deleteCryptoKey(1);
     storeCryptoKey(cryptoKey);
 }
-export async function genAesKey(passwordCryptoKey, salt) {
+export async function genAesKey(salt) {
+    let passwordCryptoKey = (await getCryptoKey(1)).cryptoObj;
     return await crypto.subtle.deriveKey(
         {
             name:"PBKDF2",
             salt,
-            iterations: 250000,
+            iterations: 200000,
             hash: {name: 'SHA-256'}
             // which type of key you want to generate {name:'AES-GCM', length: 256}
         }, passwordCryptoKey, {name:'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']
@@ -63,37 +64,61 @@ export function base64ToUint8Array(base64) {
     }
     return new Uint8Array(bytes.buffer);
 }
-export async function decrypt(message) {
-    const salt = base64ToUint8Array(message.substr(0, 44));
-    const iv = base64ToUint8Array(message.substr(44, 16));
-    const ciphertext = base64ToUint8Array(message.substr(60));
-    let passwordCryptoKey = (await getCryptoKey(1)).cryptoObj;
-    const aeskey = await genAesKey(passwordCryptoKey, salt);
-    const plaintext = await crypto.subtle.decrypt({
-        name: "AES-GCM",
-        iv
-    }, aeskey, ciphertext);
-    return (getDataDecoding(plaintext));
+export async function decrypt(secret) {
+    // first extract salt, iv from any of the field eg.login
+
+    // generate iv for data decryption....
+    const iv = base64ToUint8Array(secret['login'].substr(44, 16));
+    // generate salt for aes key generation...
+    const salt = base64ToUint8Array(secret['login'].substr(0, 44));
+    // derive an aes key using passwordCryptoKey 
+    const aeskey = await genAesKey(salt);
+    
+    let decryptedSecret = Object.fromEntries(await Promise.all(Object.entries(secret).map(([key, value])=> {
+        if (key === 'id')    return [key, value];
+        // generate encrypted data using iv+aeskey+datainBytes 
+        const ciphertext = base64ToUint8Array(value.substr(60));
+        return Promise.all([key, 
+            crypto.subtle.decrypt({
+                name: "AES-GCM",
+                iv
+            }, aeskey, ciphertext)
+        ]);
+    })));
+    for (let [key, value] of Object.entries(decryptedSecret)) {
+        if (key !== 'id') 
+            decryptedSecret[key] = getDataDecoding(value);
+    }
+    return decryptedSecret;
 }
-export async function encrypt(message) {
-    const dataInBytes = getDataEncoding(message);
-    // get weak password crypto key get it from indexedDB if exist
-    let passwordCryptoKey = (await getCryptoKey(1)).cryptoObj;
-    // derive an aes key from passwordKye 
-    const salt = crypto.getRandomValues(new Uint8Array(32));
-    const aeskey = await genAesKey(passwordCryptoKey, salt);
+export async function encrypt(secret) {
     // generate iv for data encryption....
     const iv = crypto.getRandomValues(new Uint8Array(12));
-    // generate encrypted data using iv+aeskey+datainBytes 
-    const encryptedContent = await crypto.subtle.encrypt({
-        name: "AES-GCM",
-        iv}, aeskey, dataInBytes
-    );
-    const encryptedBytes = new Uint8Array(encryptedContent);
+    // generate salt for aes key generation...
+    const salt = crypto.getRandomValues(new Uint8Array(32));
+    // derive an aes key using passwordCryptoKey 
+    const aeskey = await genAesKey(salt);
 
-    //testing
-    const res = Uint8ArrayToBase64(salt)+Uint8ArrayToBase64(iv)+Uint8ArrayToBase64(encryptedBytes);
-    return res ;
+    // now encrypt all the fields of a secret (dataInBytes + iv + aesKey)
+    let encryptedSecret = Object.fromEntries(await Promise.all(Object.entries(secret).map(([key, value])=> {
+        if (key === 'id')    return [key, value];
+        const dataInBytes = getDataEncoding(value);
+        // generate encrypted data using iv+aeskey+datainBytes 
+        return Promise.all([key, 
+            crypto.subtle.encrypt({
+                name: "AES-GCM",
+                iv
+            }, aeskey, dataInBytes)
+        ]);
+    })));
+    //concate salt and iv together... and send it on server for backup....
+    for (let [key, value] of Object.entries(encryptedSecret)) {
+        if (key !== 'id') { 
+            const encryptedBytes = new Uint8Array(value);
+            encryptedSecret[key] = Uint8ArrayToBase64(salt)+Uint8ArrayToBase64(iv)+Uint8ArrayToBase64(encryptedBytes);
+        }
+    }
+    return encryptedSecret;
 }
 // indexedDB store-CryptoKeys implementation....
 

@@ -28,9 +28,9 @@ class User {
         return token;
     }
 }
-User.findOne = (filters)=> {
+User.find = (filters, columns=["*"])=> {
     return new Promise((resolve, reject)=>{
-        let query=`SELECT * FROM USER WHERE `, len = Object.keys(filters).length;
+        let query=`SELECT ${columns.join(', ')} FROM USER WHERE `, len = Object.keys(filters).length;
         if (filters && typeof filters == 'object') {
             query += Object.keys(filters).map(function (key) {
                 return encodeURIComponent(key) + '="' + (filters[key]) + '"';
@@ -39,15 +39,6 @@ User.findOne = (filters)=> {
         connection.query(query, (err, result)=>{
             if (err)    reject(new Error('Something failed [Record searching] :'+err));
             else resolve(result[0]);
-        });
-    });
-}
-User.find = ()=> {
-    return new Promise((resolve, reject)=>{
-        const query = `SELECT * FROM USER`;
-        connection.query(query, (err, result)=>{
-            if (err)    reject(new Error('Something failed [Record searching] :'+err));
-            else resolve(result);
         });
     });
 }

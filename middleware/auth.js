@@ -13,12 +13,12 @@ module.exports.auth = async function(req, res, next, omitSecondFactor=false) {
     }
     try {
         const {email, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
-        const user = await User.findOne({email: email});
+        const user = await User.find({email: email});
 
         if (!user) {
             return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});
         }
-        const twofaSetting = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+        const twofaSetting = (await UserSetting.find({user_id: user.id, name: "2fa"}))[0];
         if (!omitSecondFactor && twofaSetting && !is2faAuthenticated) {
             return res.status(206).json({ok: false, message: 'Unauthorized'});
         } 
@@ -36,12 +36,12 @@ module.exports.forwardAuthenticate = async function(req, res, next) {
     }
     try {
         const {email, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
-        const user = await User.findOne({email: email});
+        const user = await User.find({email: email});
 
         if (!user) {
             return next();
         }
-        const twofaSetting = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+        const twofaSetting = (await UserSetting.find({user_id: user.id, name: "2fa"}))[0];
         if (twofaSetting && !is2faAuthenticated) {
             return next();
         } 

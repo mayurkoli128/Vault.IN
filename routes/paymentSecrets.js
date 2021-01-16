@@ -10,8 +10,8 @@ const _ = require('lodash');
 // @desc    route for user to show his all his secrets(page render)
 // @access  PRIVATE 
 router.get('/mine', [auth], async (req, res)=> {
-    const user = await User.findOne({email: req.user.email});
-    const records = await Secret.findOne({user_id: user.id});
+    const user = await User.find({email: req.user.email});
+    const records = await Secret.find({user_id: user.id});
     console.log(records);
     res.status(200).send(records);
 });
@@ -21,7 +21,7 @@ router.get('/mine', [auth], async (req, res)=> {
 // @desc    route for user to add new secret
 // @access  PRIVATE  
 router.post('/add', [auth], async(req, res)=> {
-    const user = await User.findOne({email: req.user.email});
+    const user = await User.find({email: req.user.email});
     const secret = new Secret(
         _.pick(req.body, ["title", "login", "password", "website_address", "note", "user_id"])
     );

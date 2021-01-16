@@ -8,7 +8,11 @@ const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const UserSettings = require('../models/userSetting');
 
-router.post('/', [auth],async(req, res)=> {
+// @type    POST
+// @route   /api/settings/
+// @desc    route for user to store setting 
+// @access  PRIVATE 
+router.post('/', [auth], async(req, res)=> {
     const user = req.user;
     if (!req.body) {
         return res.status(400).json({ok: false, message: 'Bad request'});
@@ -19,20 +23,32 @@ router.post('/', [auth],async(req, res)=> {
     res.status(200).json({ok: true, message: "Inserted"});
 });
 
+// @type    GTE
+// @route   /api/settings/
+// @desc    route for user to get all his/her settings
+// @access  PRIVATE 
 router.get('/', [auth], async(req, res)=> {
     const user = req.user;
-    const result = await UserSetting.findOne({user_id: user.id});
+    const result = await UserSetting.find({user_id: user.id});
     res.status(200).json({ok: true, message: "", settings: result});
 });
 
-router.get('/2fa/generate', async(req, res)=> {
+// @type    GET
+// @route   /api/settings/2fa/generate
+// @desc    route for user to get secrets & qrcode for activation of 2fa
+// @access  PRIVATE 
+router.get('/2fa/generate', [auth], async(req, res)=> {
     const secret = speakeasy.generateSecret({
-        name: "keeper"
+        name: "Vault.IN"
     });
     let qrcode_img = await qrcode.toDataURL(secret.otpauth_url);
     res.status(200).json({ok: true, message: "Success", qrcode: qrcode_img, base32secret: secret.base32});
 });
 
+// @type    POST
+// @route   /api/settings/2fa/verify
+// @desc    route for user to verify provided token value
+// @access  PRIVATE 
 router.post('/2fa/verify', [auth], async(req, res)=> {
     const user = req.user;
     if (!req.body) {
@@ -55,12 +71,21 @@ router.post('/2fa/verify', [auth], async(req, res)=> {
     res.status(200).json({ok: true, message: "Success"});
 });
 
+// @type    GET
+// @route   /api/settings/2fa/authenticate
+// @desc    route for user to authenticate provided token value
+// @access  PRIVATE 
 router.get('/2fa/authenticate', async(req, res, next)=>{await auth(req, res, next, true)}, (req, res)=> {
     res.status(206).render('2fa');
 });
+
+// @type    POST
+// @route   /api/settings/2fa/authenticate
+// @desc    route for user to authenticate provided token value
+// @access  PRIVATE 
 router.post('/2fa/authenticate', async(req, res, next)=>{await auth(req, res, next, true)}, async(req, res)=> {
     const user = req.user;
-    const secret = (await UserSetting.findOne({user_id: user.id, name: "2fa"}))[0];
+    const secret = (await UserSetting.find({user_id: user.id, name: "2fa"}))[0];
     if (!req.body) {
         return res.status(400).json({ok: false, message: 'Bad request'});
     }
@@ -77,9 +102,13 @@ router.post('/2fa/authenticate', async(req, res, next)=>{await auth(req, res, ne
     res.status(200).redirect('../../users/me');
 });
 
+// @type    DELETE
+// @route   /api/settings/2fa/
+// @desc    route for user to deactivate users setting
+// @access  PRIVATE 
 router.delete('/2fa/:setting', [auth], async (req, res)=> {
     const user = req.user;
-    let result = await UserSettings.findOne({name: req.params.setting, user_id: user.id});
+    let result = await UserSettings.find({name: req.params.setting, user_id: user.id});
     if (!result[0]) {
         return res.status(400).json({ok: false, message: '2fa has not activated'});
     }

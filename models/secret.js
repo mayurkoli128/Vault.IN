@@ -21,9 +21,9 @@ class Secret {
         });
     }
 }
-Secret.findOne = (filters)=> {
+Secret.find = (filters, columns=["*"])=> {
     return new Promise((resolve, reject)=>{
-        let query=`SELECT * FROM SECRET WHERE `, len = Object.keys(filters).length;
+        let query=`SELECT ${columns.join(', ')} FROM SECRET WHERE `, len = Object.keys(filters).length;
         if (filters && typeof filters == 'object') {
             query += Object.keys(filters).map(function (key) {
                 return encodeURIComponent(key) + '="' + (filters[key]) + '"';

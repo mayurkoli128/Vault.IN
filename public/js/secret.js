@@ -6,13 +6,16 @@ import {makeRequest} from './xhr.js';
 let insertForm = document.getElementById('add-secret');
 insertForm.addEventListener('submit', async(event)=> {
   event.preventDefault();
-  let secret={};
+  let secret={}, title;
   for ( var i = 0; i < insertForm.elements.length; i++) {
       var e = insertForm.elements[i];
       if (e.type === 'submit') continue ;
-      if (e.name === 'title'){ secret[e.name] = e.value;continue;}
-      secret[e.name] = await encrypt(e.value);
+      if (e.name === 'title')   title = e.value ;
+      else 
+        secret[e.name] = e.value;
   }
+  secret = await encrypt(secret);
+  secret['title'] = title ;
   try {
     let res = await makeRequest({method: "POST", url: "../secrets/add", headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret});
     res = JSON.parse(res);
@@ -43,19 +46,24 @@ let rwForm = document.getElementById('update-secret');
 window.decryptSecret = async function(id) {
   startSpinner();
   document.getElementById('head-id').innerHTML=id;
-
   try {
     let res = await makeRequest({method: "GET", url: `../secrets/${id}`});
-    res = JSON.parse(res);
-    const secret = res.secret;
+    let secret = JSON.parse(res).secret;
+    let title = secret['title'];
+    delete secret.title;
     let flag = document.getElementById('decryption').checked;
+    if (flag) {
+      secret = await decrypt(secret);
+    }
     for ( var i = 0; i < rwForm.elements.length; i++) {
       var e = rwForm.elements[i];
-      if (e.type === 'submit' || e.type === 'button') continue ;
-      if (!flag) e.disabled=true;
-      else e.disabled=false;
-      if (e.name === 'title' || !flag){ e.value = secret[e.name];continue;}
-      e.value = await decrypt(secret[e.name]);
+      if (e.name === '') continue ;
+      if (!flag) e.disabled = true;
+      else e.disabled = false;
+      if (e.type === 'button') continue ;
+      if (e.name === 'title') e.value = title;
+      else 
+        e.value = secret[e.name];
     }
     stopSpinner();
     $('#update-secret-modal').modal('show');
@@ -101,7 +109,7 @@ window.viewVault = async function() {
     let secrets = res.secrets, all="";
     secrets.forEach((secret)=> {
       all += `<tr class="table-row">
-                <th scope="row">${secret.id}</th>
+                <th scope="row" >${secret.id}</th>
                 <td onclick="decryptSecret(this.id)" id= "${secret.id}">
                 <span class="material-icons" style="vertical-align: bottom;">text_snippet</span>
                 ${secret.title}</td>

@@ -17,7 +17,7 @@
 <body>
   <!-- navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-primary sticky-top navbar-default navbar-fixed-top">
-    <a class="navbar-brand" href="/">Tiny.URL</a>
+    <a class="navbar-brand" href="/">Vault.IN</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
       aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -71,7 +71,7 @@
         </div>
       </div>
     </div>
-    <a href="#" class="sidebar-links">
+    <a href="javascript:viewVault()" class="sidebar-links">
       <div class="sidebar-logo">
         <span class="material-icons" style="vertical-align: bottom;">
           lock
@@ -170,7 +170,7 @@
   </div>
 
   <!-- Modal for to Show decrypted secret -->
-  <div class="modal fade" id="update-secret-modal" tabindex="-1" role="dialog"
+  <div class="modal" id="update-secret-modal" tabindex="-1" role="dialog"
     aria-labelledby="update-secret" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
@@ -234,7 +234,7 @@
               <div class="form-group">
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary form-control-lg" data-dismiss="modal">Close</button>
-                  <input type="submit" id="secretUpdate" name="secretUpdate" value="SAVE CHANGES" class="btn form-control-lg btn-primary" autocomplete="off" disabled />
+                  <button type="submit" id="secretUpdate" name="secretUpdate" class="btn form-control-lg btn-primary" autocomplete="off" disabled />SAVE CHANGES</button>
                 </div>
               </div>
             </div>
@@ -280,7 +280,37 @@
           </button>
         </div>
         <div class="modal-body">
-          
+
+          <div class="col-md-8 offset-md-2">
+            <div class="row">
+              <div class="col-md-8 offset-md-2">
+                <div class="">
+                  <img src="https://images.pexels.com/photos/753626/pexels-photo-753626.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="No Image" srcset="" class="img-fluid rounded-circle">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row top7">
+            <div class="col-lg-12 offset-lg-0 col-sm-8 offset-sm-2">
+            <div class="user-info table-responsive-md">
+              <table class="table table-sm table-primary table-striped">
+                <tbody>
+                  <tr>
+                    <td style="font-weight: 500;">Email</td>
+                    <td><%= user.email%></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 500;">Username</td>
+                    <td><%= user.username%></td>
+                  </tr>
+  
+                </tbody>
+              </table>
+            </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -351,7 +381,7 @@
                 <div class="qrcode-box">
                   <img class="img-fluid" id="qrcode" src="" alt="QR-Code" srcset="">
                   <form id="activate-2fa">
-                    <div class="form-group d-flex justify-content-center">
+                    <div class="form-group d-flex justify-content-center top10">
                       <input type="text" class="form-control w-50" id="passcode" aria-describedby="passcodeHelp" placeholder="6-digit code" name="userToken" autocomplete="off">
                     </div>
                     <small id="passcodeHelp"></small>
