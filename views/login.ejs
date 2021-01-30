@@ -1,115 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <title>Login</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 offset-md-3">
-          <div class="block">
-            <form action="login" method="post" id="form">
-              <%- include('./partials/messages.ejs') %>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+  <title>Login</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="block">
+          <form action="login" method="post" id="form">
+            <%- include('./partials/messages.ejs') %>
+
               <div class="col-lg-10 offset-lg-1">
                 <div class="form-group">
-                  <input
-                    type="email"
-                    placeholder="Enter Your Email"
-                    name="email"
-                    id="Email"
-                    class="form-control form-control-lg" autocomplete="off"
-                    required
-                  />
-                  <small id="emailHelp" class="form-text text-muted"
-                    >We'll never share your email with anyone else.</small
-                  >
+                  <input type="text" placeholder="Enter Your username" name="username"
+                    class="form-control form-control-lg" autocomplete="off" required />
                 </div>
               </div>
 
               <div class="col-lg-10 offset-lg-1">
                 <div class="form-group">
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="password"
-                    id="password"
-                    class="form-control form-control-lg" autocomplete="off"
-                    required
-                  />
+                  <input type="password" name="password" placeholder="password" id="password"
+                    class="form-control form-control-lg" autocomplete="off" required />
                   <span class="material-icons field-icon">
                     visibility
-                    </span>
+                  </span>
                 </div>
               </div>
               <div class="col-lg-10 offset-lg-1">
                 <div class="form-group">
-                  <input
-                    type="submit"
-                    value="Submit"
-                    class="btn btn-primary form-control-lg btn-lg btn-block" autocomplete="off"
-                    required
-                  />
+                  <input type="submit" value="SUBMIT" class="btn btn-primary form-control-lg btn-lg btn-block"
+                    autocomplete="off" required />
                 </div>
               </div>
               <div class="col-lg-10 offset-lg-1">
-                <span
-                  >Not have an account?
-                  <a
-                    href=" /api/users/register"
-                    style="color: rgb(4, 155, 155); font-weight: bolder"
-                    >Register here</a
-                  ></span
-                >
+                <span>Not have an account?
+                  <a href=" /join/register" style="color: rgb(4, 155, 155); font-weight: bolder">Register
+                    here</a></span>
               </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
-    <script>
-      let eye = document.getElementsByClassName('field-icon');
-      eye[0].addEventListener('click', ()=> {
-        if (eye[0].innerHTML == 'visibility') {
-          eye[0].innerHTML = "visibility_off";
-        } else {
-          eye[0].innerHTML = "visibility";
-        }
-      });
-    </script>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="/js/login.js" type="module"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-      integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+  </div>
+  <script>
+    let eye = document.getElementsByClassName('field-icon');
+    eye[0].addEventListener('click', () => {
+      if (eye[0].innerHTML == 'visibility') {
+        eye[0].innerHTML = "visibility_off";
+      } else {
+        eye[0].innerHTML = "visibility";
+      }
+    });
+  </script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="/js/login.js" type="module"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>

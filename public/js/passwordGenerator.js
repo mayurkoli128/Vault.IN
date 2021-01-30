@@ -1,4 +1,4 @@
-import {Uint8ArrayToBase64} from './index.js'
+import {Uint8ArrayToBase64} from '../lib/index.js'
 
 let key = document.getElementsByClassName('key');
 key[0].addEventListener('click', ()=> {

@@ -5,8 +5,8 @@ require('express-async-errors');
 const cookieParser = require('cookie-parser');
 const flash=require('connect-flash');
 const session = require('express-session');
-const users = require('./routes/users');
-const auth = require('./routes/auth');
+const user = require('./routes/user');
+const join = require('./routes/join');
 const secrets = require('./routes/secrets');
 const settings = require('./routes/userSettings');
 const home = require('./routes/home');
@@ -30,17 +30,19 @@ app.use(express.urlencoded({extended:false}));
 
 
 // rendering public static files
-app.use(express.static('public'));
+app.use('/', express.static('public'));
+app.use('/', express.static('API'));
+app.use('/', express.static('lib'));
 
 //set view engine ejs
 app.set('view engine', 'ejs');
 
 // route
 app.use('/', home);
-app.use('/api/auth/', auth);
-app.use('/api/users/', users);
-app.use('/api/secrets/', secrets);
-app.use('/api/settings/', settings);
+app.use('/join/', join);
+app.use('/user/', user);
+app.use('/secrets/', secrets);
+app.use('/settings/', settings);
 app.use(error);
 
 app.listen(8080, ()=> {

@@ -1,4 +1,4 @@
-import {genPasswordHash, genCryptoKey} from './index.js';
+import {genPasswordHash, genCryptoKey} from '../lib/index.js';
 
 const form = document.getElementById('form');
 form.addEventListener('submit', async(event)=> {

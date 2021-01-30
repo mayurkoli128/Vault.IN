@@ -3,14 +3,14 @@ require('dotenv').config();
 
 class PaymentSecret {
     constructor(pSecret) {
-        this.card_title = pSecret.card_title;
-        this.card_number = pSecret.card_number;
-        this.security_code = pSecret.security_code;
-        this.card_holder_name = pSecret.card_holder_name;
-        this.billing_address = pSecret.billing_address;
-        this.expiration_month = pSecret.expiration_month;
-        this.expiration_year = pSecret.expiration_year;
-        this.user_id = pSecret.user_id;
+        this.cardTitle = pSecret.cardTitle;
+        this.cardNumber = pSecret.cardNumber;
+        this.securityCode = pSecret.securityCode;
+        this.cardHolderName = pSecret.cardHolderName;
+        this.billingAddress = pSecret.billingAddress;
+        this.expirationMonth = pSecret.expirationMonth;
+        this.expirationYear = pSecret.expirationYear;
+        this.userId = pSecret.userId;
         this.last_modified = new Date().toString();
     }
     save = ()=>{

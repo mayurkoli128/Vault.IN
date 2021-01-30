@@ -7,7 +7,6 @@
     background-color: rgb(255, 255, 255);
     padding: 25px;
 }
-
 .btn-element {
     padding: 10px;
     margin-top: 40px;
@@ -17,17 +16,7 @@
     margin-top: 10px;
 }
 input[type] {
-    font-size: 0.9em;
-}
-
-.sidebar-container {
-    position: fixed;
-    width: 200px;
-    height: 100%;
-    top: 56px;
-    left: 0;
-    background-color: rgb(0, 97, 153);
-    color: #fff;
+    font-size: 1em;
 }
 .sidebar-logo{
     padding: 20px 20px 20px 30px;
@@ -39,15 +28,6 @@ input[type] {
     color: white;
 }
 
-.sidebar-links {
-    color: white;
-}
-
-.table-row:hover {
-    cursor: pointer;
-    border-right: 1px solid rgb(0, 68, 255);
-    border-left: 1px solid rgb(4, 0, 255);
-}
 .key {
     user-select: none;
     cursor: pointer;
@@ -65,34 +45,17 @@ input[type] {
 .top22 { margin-top:17px; }
 .top30 { margin-top:30px; }
 
-.fs1 {font-size: x-small;}
+.fs0 {font-size: 12px;}
+.fs1 {font-size: small;}
 .fs2 {font-size: x-small;}
+.fs3 {font-size: xx-small;}
 
-.loader {
-    position: fixed;
-    z-index: 99;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    color: rgb(0, 0, 0);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-#loading-mask {
-    position: fixed;
-    z-index: 1051;
-    width: 100%;
-    height: 100%;
-    top: 0px;
-    left: 0px;
-}  
+ 
 .field-icon {
     user-select: none;
     float: right;
-    margin-left: -36px;
-    margin-top: -36px;
+    margin-left: -30px;
+    margin-top: -30px;
     margin-right: 4px;
     cursor: pointer;
     position: relative;
@@ -105,4 +68,69 @@ input[type] {
 .qrcode-box #qrcode {
     height: 300px;
     width: 300px;
+}
+#profile-logo {
+    background-color: rgb(0, 188, 245);
+    padding: 5px;
+    border-radius: 20px;
+}
+body {
+    padding-top: 50px;
+}
+.sub-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+.navbar-fixed-top {
+    border: 0;
+}
+.sidebar {
+    display: none;
+}
+@media (min-width: 200px) {
+    .sidebar {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; 
+        background-color: #ebe9e9;
+        width: 180px;
+    }
+}
+.nav-sidebar {
+    margin-right: -21px; 
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+.nav-sidebar > li > a {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}
+.main {
+    padding: 20px;
+}
+@media (min-width: 200px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 220px;
+    }
+}
+.main .page-header {
+    margin-top: 0;
+}
+
+input,
+input::-webkit-input-placeholder {
+    font-size: 13px;
 }

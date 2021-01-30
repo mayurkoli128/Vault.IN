@@ -1,6 +1,5 @@
-import {encrypt, decrypt, genCryptoKey, genPasswordHash} from './index.js';
-import {makeRequest} from './xhr.js'
-import {startSpinner, stopSpinner} from './loader.js';
+import {encrypt, decrypt, genCryptoKey, genPasswordHash} from '../lib/index.js';
+import {makeRequest} from '../API/xhr.js'
 
 const passin = document.getElementById('c-password');
 passin.addEventListener('input', ()=> {
@@ -22,7 +21,6 @@ confirmPassin.addEventListener('input', ()=> {
         document.getElementById('not-match-warn').style.visibility='visible';
     }
 });
-
 function decryptAll(secrets) {
     return Promise.all(secrets.map((secret)=> {
         return decrypt(secret);

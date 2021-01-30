@@ -23,7 +23,7 @@ router.get('/mine', [auth], async (req, res)=> {
 router.post('/add', [auth], async(req, res)=> {
     const user = await User.find({email: req.user.email});
     const secret = new Secret(
-        _.pick(req.body, ["title", "login", "password", "website_address", "note", "user_id"])
+        _.pick(req.body, ["title", "login", "password", "websiteAddress", "note", "userId"])
     );
     const result = await secret.save();
     res.status(200).send(result);
