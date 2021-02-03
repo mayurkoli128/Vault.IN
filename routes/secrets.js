@@ -34,8 +34,24 @@ router.get('/:id', [auth], async (req, res)=> {
     if (secret.rights < rights.READ) {
         return res.status(405).json({ok: false, message: "You can't read the secret."});
     }
-    delete secret.rights;
     res.status(200).json({ok: true, message: 'Found', secret: secret, user: user});
+});
+
+// @type    GET
+// @route   /api/secret/:id
+// @desc    route for user to show his secret with id=:id
+// @access  PRIVATE 
+router.get('/owners/:id', [auth], async (req, res)=> {
+    const user = req.user;
+    const userRights = await Secret.find({secretId: req.params.id, userId: user.id}, ["rights"]);
+    if (!userRights[0]) {
+        return res.status(404).json({ok: false, message:'Not Found'});
+    }
+    const owners = (await Secret.find({secretId: req.params.id}, ["rights", "username"]));
+    if (!owners[0]) {
+        return res.status(404).json({ok: false, message:'Not Found'});
+    }
+    res.status(200).json({ok: true, message: 'Found', owners: owners, user: {username: user.username, rights: userRights[0].rights}});
 });
 
 // @type    POST
@@ -44,9 +60,8 @@ router.get('/:id', [auth], async (req, res)=> {
 // @access  PRIVATE  
 router.post('/add', [auth], async(req, res)=> {
     const user = req.user;
-    req.body.secret.lastModifiedBy = req.user.id;
     const data = new SecretRecord(
-        _.pick(req.body.secret, ["title", "login", "password", "websiteAddress", "note", "lastModifiedBy"])
+        _.pick(req.body.secret, ["title", "login", "password", "websiteAddress", "note"])
     );
     data.type = "PRIVATE";
     data.lastModifiedBy = user.id;
@@ -90,7 +105,7 @@ router.delete('/:id', [auth], async(req, res)=> {
     if (!secret) {
         return res.status(404).json({ok: false, message:'Not Found'});
     }
-    if (secret.rights < rights.WRITE) {
+    if (secret.rights < rights.SHARE) {
         return res.status(405).json({ok: false, message: "You can't delete the secret."});
     }
     await Secret.delete(req.params.id);
@@ -101,22 +116,48 @@ router.delete('/:id', [auth], async(req, res)=> {
 // @route   /api/secret/1
 // @desc    route for user to update secret
 // @access  PRIVATE
-router.patch('/:id', [auth], async (req, res)=> {
+router.patch('/:id/metadata', [auth], async (req, res)=> {
     const user = req.user;
-    const secret = await Secret.find({secretId: req.params.id, userId: user.id});
+    let secret = (await Secret.find({secretId: req.params.id, userId: user.id}, ["rights", "username"]))[0];
     if (!secret) 
         return res.status(404).json({ok: false, message:'Not Found'});
+    
+    if (secret.rights < rights.WRITE) {
+        return res.status(405).json({ok: false, message: "You can't update the secret."});
+    }
+    secret = new SecretRecord(
+        _.pick(req.body.secret, ["title", "login", "password", "websiteAddress", "note"])
+    );
+    secret.lastModifiedBy = user.id;
+    const metadata = new Metadata({dKey : req.body.dKey, rights : rights.SHARE});
+    console.log(secret);
+    console.log(metadata);
     const result = await Secret.findAndModify({id: req.params.id, userId: user.id}, req.body);
     res.send(result);
 });
 
-// @type    POST
-// @route   /api/secret/mine
-// @desc    route for user to add new secret
-// @access  PRIVATE 
-router.post('/share', (req, res)=> {
+// @type    PATCH
+// @route   /api/secret/1
+// @desc    route for user to update secret
+// @access  PRIVATE
+router.patch('/:id/data', [auth], async (req, res)=> {
+    const user = req.user;
+    let secret = (await Secret.find({secretId: req.params.id, userId: user.id}, ["rights", "username"]))[0];
+    if (!secret) 
+        return res.status(404).json({ok: false, message:'Secret not found'});
     
+    if (secret.rights < rights.WRITE) {
+        return res.status(405).json({ok: false, message: "You can't update the secret."});
+    }
+    secret = new SecretRecord(
+        _.pick(req.body, ["login", "password", "websiteAddress", "note"])
+    );
+    secret.lastModifiedBy = user.id;
+    // const metadata = new Metadata({dKey : req.body.dKey, rights : rights.SHARE});
+    const result = await SecretRecord.findAndModify({id: req.params.id}, req.body);
+    res.status(200).json({ok: true, message: "success"});
 });
+
 router.post('/unshare', (req, res)=> {
 
 });

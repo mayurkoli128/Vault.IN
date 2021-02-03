@@ -1,25 +1,91 @@
-import { addSecret, deleteSecret, getSecret, getAllSecret, updateSecret, shareSecret, unshareSecret} from '../API/server.js';
+import { addSecret, deleteSecret, getSecret, getAllSecret, updateSecret, shareSecret, unshareSecret, getOwners} from '../API/server.js';
 
+const rights = {
+	0: "Read",
+	1: "Read & Write",
+	2: "Read, Write & Share"
+}
 //share secret
-let shareSecretForm = document.getElementById('share-secret');
-shareSecretForm.addEventListener('submit', async(event)=> {
-	event.preventDefault();
+window.shareSecret = async function() {
 	let username = document.getElementById('friend-username').value,
 	e = document.getElementById('friend-rights'),
 	rights = e.options[e.selectedIndex].value,
 	msg = document.getElementById('shareSecretHelp'),
-	recordId = document.getElementById('record-id').getAttribute('data-content');
-	
+	secretId = document.getElementById('record-id').getAttribute('data-content');
+
 	try {
-		const res = await shareSecret(recordId, username, rights);
+		const res = await shareSecret(secretId, username, rights);
 		// add the user here...
 		msg.style.display = "none";
+		whoHasAccess(secretId);
 	} catch (error) {
 		console.log(error);
 		msg.innerHTML = error.response.message;
 		msg.style.display = "block";
 	}
-});
+};
+window.whoHasAccess = async function (id) {
+	let e = document.getElementById('whoHasAccess'), list = "";
+	const {user, owners} = await getOwners(id);
+	owners.forEach((owner)=> {
+		// create logo...
+		let logo = owner.username[0]+owner.username[1], options="", disabled="";
+		logo = logo.toUpperCase();
+
+		// create options...
+		for (let i = 0; i < 3; i++) {
+			if (owner.rights == i) 
+				options += `<option value="${i}" selected>${rights[i]}</option>`;
+			else options += `<option value="${i}">${rights[i]}</option>`;
+		}
+		if (user.username == owner.username || user.rights < 2) {
+			disabled="disabled";
+		}
+		// create list
+		list += `<tr>
+			<td scope="row"><span class="profile-logo">${logo}</span>${owner.username}</td>
+			<td>
+				<select ${disabled}>
+				${options}
+				</select>
+			</td>
+			<td>
+				<abbr title="unshare secret" style="text-decoration: none; border: none;"> 
+				<button type="submit" style="padding: 0; border: none; background: none;">
+				<span
+					class="material-icons btn btn-light" style="vertical-align: middle; cursor: pointer; user-select: none;" ${disabled}>
+					remove_circle_outline
+				</span>
+				</button>
+				</abbr>
+			</td>
+		</tr>`
+	});
+	list += `<tr>
+			<td scope="row"><input type="text" name="friend-username" id="friend-username"
+				placeholder="Username..." autocomplete="off"></td>
+			<td>
+			<select name="friend-rights" id="friend-rights">
+				<option value="0">Read</option>
+				<option value="1">Read & Write</option>
+				<option value="2">Read, Write & Share</option>
+			</select>
+			</td>
+			<td>
+			<abbr title="share secret" style="text-decoration: none; border: none;"> 
+				<button type="submit" style="padding: 0; border: none; background: none;" onclick="shareSecret()"> 
+					<span
+					class="material-icons btn btn-light" style="vertical-align: middle; cursor: pointer; user-select: none;">
+					add_circle_outline
+					</span>
+				</button>
+			</abbr>
+			</td>
+		</tr>`;
+
+	e.innerHTML = list;
+}
+
 // add secret
 let insertForm = document.getElementById('add-secret');
 insertForm.addEventListener('submit', async (event) => {
@@ -62,13 +128,18 @@ window.decryptSecret = async function (id) {
 	document.getElementById('record-id').setAttribute("data-content", id);
 	let status = !document.getElementById('decryption').checked;
 	try {
-		let secret = await getSecret(id, status);
+		let {secret, title, rights} = await getSecret(id, status);
 		var e = rwForm.elements;
 		e[0].value = secret.login;
+		e[0].disabled= (rights == 0);
 		e[1].value = secret.password;
+		e[1].disabled= (rights == 0);
 		e[2].value = secret.websiteAddress;
+		e[2].disabled= (rights == 0);
 		e[3].value = secret.note;
-		document.getElementById('record-title').innerHTML = `<span class="material-icons" style="vertical-align: middle; opacity: 0.5">text_snippet</span>`+secret.title;
+		e[3].disabled= (rights == 0);
+		document.getElementById('record-title').innerHTML = `<span class="material-icons" style="vertical-align: middle; opacity: 0.5">text_snippet</span>`+title;
+		whoHasAccess(id);
 		$('#update-secret-modal').modal('show');
 	} catch (error) {
 		console.log(error);
@@ -78,7 +149,8 @@ window.decryptSecret = async function (id) {
 let rwForm = document.getElementById('update-secret');
 rwForm.addEventListener('submit', async (event) => {
 	event.preventDefault();
-	let e = rwForm.elements;
+	let e = rwForm.elements,
+	secretId = document.getElementById('record-id').getAttribute('data-content');;
 	let secret = {
 		login: e[0].value,
 		password: e[1].value,
@@ -88,10 +160,11 @@ rwForm.addEventListener('submit', async (event) => {
 	let username = document.getElementById('username').innerText;
 	username = username.substr(10);
 	try {
-		let res = await updateSecret(secret, username);
+		let res = await updateSecret(secret, secretId, username);
 		if (res.response.ok) {
-			document.getElementsByClassName('close')[0].click();
+			document.getElementsByClassName('close')[1].click();
 			rwForm.reset();
+			document.getElementById('secretUpdate').disabled=true;
 			viewVault();
 		}
 	} catch (error) {

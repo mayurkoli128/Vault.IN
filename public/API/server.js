@@ -18,51 +18,48 @@ export async function addUser(user) {
     user.privateKey = keys.privateKey;
     return makeRequest({method: "POST", url: `${db}/join/register`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: user});
 }
+export function deleteSecret(secretId) {
+    return makeRequest({method: "DELETE", url: `${db}/secrets/${secretId}`});
+}
+export async function getSecret(secretId, wantCipher = false) {
+    let {user, secret} = (await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`})).response;
+    let encryptedData = {
+        login: secret.login,
+        password: secret.password,
+        websiteAddress: secret.websiteAddress,
+        note: secret.note
+    }
+    if (wantCipher) {
+        return {secret: encryptedData, title: secret.title, rights: secret.rights};
+    }
+    return {secret: await decrypt(encryptedData, secret.dKey, user.privateKey), title: secret.title, rights: secret.rights};
+}
+export function getAllSecret() {
+    return makeRequest({method: "GET", url: `${db}/secrets/`});
+}
 export async function addSecret(secret, username) {
     // username, publicKey...
     username=username.trim();
     let title = secret.title;
     delete secret.title;
-    const res = await makeRequest({method: "GET", url: `${db}/user/${username}`});
-    secret = await encrypt(secret, res.response.user.publicKey);
-    secret.secret.title = title;
-    return makeRequest({method: "POST", url: `${db}/secrets/add`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret});
+    const {user} = (await makeRequest({method: "GET", url: `${db}/user/${username}`})).response;
+    let encryptedData = await encrypt(secret, user.publicKey);
+    encryptedData.secret.title = title;
+    return makeRequest({method: "POST", url: `${db}/secrets/add`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: encryptedData});
 }
-export function deleteSecret(secretId) {
-    return makeRequest({method: "DELETE", url: `${db}/secrets/${secretId}`});
-}
-export async function getSecret(secretId, wantCipher = false) {
-    const res = await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`});
-    if (wantCipher) {
-        return res.response.secret;
-    }
-    let secret = res.response.secret;
-    let dKey = secret.dKey;
-    delete secret.dKey;
-    let title = secret.title;
-    delete secret.title;
-    let privateKey = res.response.user.privateKey;
-    secret = await decrypt(secret, dKey, privateKey);
-    secret.title = title;
-    return secret;
-}
-export function getAllSecret() {
-    return makeRequest({method: "GET", url: `${db}/secrets/`});
-}
-export async function updateSecret() {
+export async function updateSecret(secret, secretId, username) {
     // username, publicKey...
-    let title = secret.title;
-    delete secret.title;
-    const res = await makeRequest({method: "GET", url: `${db}/user/${username}`});
-    secret = await encrypt(secret, res.response.user.publicKey);
-    secret.secret.title = title;
-    return makeRequest({method: "PATCH", url: `${db}/secrets/{}`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret});
+    username=username.trim();
+    let {user} = (await makeRequest({method: "GET", url: `${db}/user/${username}`})).response,
+    {dKey} = (await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`})).response.secret;
+    let {aesKey, iv} = await unwrapDkey(user.privateKey, dKey);
+    secret = await encrypt(secret, user.publicKey, {aesKey: aesKey, iv: iv});
+    return makeRequest({method: "PATCH", url: `${db}/secrets/${secretId}/data`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret.secret});
 }
 export async function shareSecret(secretId, username, rights) {
     // request for public key.
-    const res = await makeRequest({method: "GET", url: `${db}/user/${username}/`}),
-    friend = res.response.friend,
-    user = res.response.user,
+    username = (username != ''? username: 'n0').trim();
+    const {friend, user} = (await makeRequest({method: "GET", url: `${db}/user/${username}/`})).response,
     secret = (await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`})).response.secret;
 
     let {aesKey, iv} = await unwrapDkey(user.privateKey, secret.dKey);
@@ -74,4 +71,8 @@ export async function shareSecret(secretId, username, rights) {
 }
 export async function unshareSecret() {
 
+} 
+export async function getOwners(secretId) {
+    const {user, owners} = (await makeRequest({method: "GET", url: `${db}/secrets/owners/${secretId}/`})).response;
+    return {user, owners};
 }

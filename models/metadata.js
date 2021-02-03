@@ -11,7 +11,7 @@ class Metadata {
     }
     save = ()=>{
         return new Promise((resolve, reject)=> {
-            const query = `INSERT INTO SECRET SET ?`
+            const query = `INSERT INTO SECRET SET ? ON DUPLICATE KEY UPDATE rights=${this.rights} `
             connection.query(query, this, (err, result)=> {
                 if (err)    reject(err);
                 resolve (result);

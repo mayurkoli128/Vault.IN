@@ -215,8 +215,10 @@
         <div class="modal-header" style="text-align: center;">
 
           <h5 class="modal-title  w-100" id="record-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
           <span data-toggle="popover" id="record-id" title="RECORD ID" class="close material-icons"
-            style="color: rgb(145, 255, 0);">
+            style="color: rgb(255, 153, 0);">
             info
           </span>
         </div>
@@ -281,8 +283,8 @@
               </form>
             </div>
             <div class="tab-pane" id="nav-access-secret">
-              <div class="alert alert-danger" id="shareSecretHelp" style="display: none;">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <div class="alert alert-danger alert-dismissible" id="shareSecretHelp" style="display: none;">
+                
               </div>
 
               <table class="table table-borderless">
@@ -293,37 +295,8 @@
                     <th scope="col">#</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td scope="row"><span id="profile-logo">MK</span></td>
-                    <td>Thornton</td>
-                    <td>
-                      <span class="material-icons" style="vertical-align: middle; cursor: pointer; user-select: none;">
-                        remove_circle_outline
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <form class="form-inline" id="share-secret">
-
-                      <td scope="row"><input type="text" name="friend-username" id="friend-username"
-                          placeholder="Username..."></td>
-                      <td>
-                        <select name="friend-rights" id="friend-rights">
-                          <option value="0">Read</option>
-                          <option value="1">Read & Write</option>
-                          <option value="2">Read, Write & Share</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button type="submit" style="padding: 0; border: none; background: none;"> <span
-                            class="material-icons" style="vertical-align: middle; cursor: pointer; user-select: none;">
-                            add_circle_outline
-                          </span></button>
-                      </td>
-                    </form>
-                  </tr>
+                <tbody id="whoHasAccess">
+                  
                 </tbody>
               </table>
               <div class="modal-footer">
@@ -508,7 +481,7 @@
               <label for="c-confirm-password">Confirm Password: </label>
               <input type="password" id="c-confirm-password" class="form-control mx-sm-3"
                 aria-describedby="passwordHelpInline" required>
-              <span style="color: red; font-size: 12px; visibility: hidden;" id="not-match-warn">
+              <span style="color: rgb(194, 10, 10); font-size: 12px; visibility: hidden;" id="not-match-warn">
                 Mismatch
               </span>
             </div>

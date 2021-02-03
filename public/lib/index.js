@@ -116,7 +116,7 @@ export function genAesKey(salt) {
                 {
                     name:"PBKDF2",
                     salt,
-                    iterations: 100000,
+                    iterations: 250000,
                     hash: {name: 'SHA-256'}
                 }, passwordCryptoKey, aesAlg, false, [ "wrapKey", "unwrapKey" ]
             );
@@ -143,7 +143,6 @@ export function decrypt(secret, dKey, privateKey) {
         try {
             const {aesKey, iv} = await unwrapDkey(privateKey, dKey);
             secret = Object.fromEntries(await Promise.all(Object.entries(secret).map(([key, value])=> {
-                if (key === 'id')    return [key, value];
                 // generate encrypted data using iv+aeskey+datainBytes 
                 const ciphertext = base64ToUint8Array(value);
                 return Promise.all([key, 
@@ -154,8 +153,7 @@ export function decrypt(secret, dKey, privateKey) {
                 ]);
             })));
             for (let [key, value] of Object.entries(secret)) {
-                if (key !== 'id') 
-                    secret[key] = getDataDecoding(value);
+                secret[key] = getDataDecoding(value);
             }
             resolve(secret);
         } catch (error) {
@@ -164,14 +162,19 @@ export function decrypt(secret, dKey, privateKey) {
     });
     
 }
-export function encrypt(secret, publicKey) {
+export function encrypt(secret, publicKey, bundle) {
     return new Promise(async(resolve, reject)=> {
         try {
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const aesKey = await crypto.subtle.generateKey(aesAlg, true, ['encrypt', 'decrypt']);
+            let iv, aesKey;
+            if (bundle) {
+                iv = bundle.iv;
+                aesKey = bundle.aesKey;
+            } else {
+                iv = crypto.getRandomValues(new Uint8Array(12));
+                aesKey = await crypto.subtle.generateKey(aesAlg, true, ['encrypt', 'decrypt']);
+            }
             // The secret is encrypted using AES-GCM-256 with randomly generated intermediate key.
             secret = Object.fromEntries(await Promise.all(Object.entries(secret).map(([key, value])=> {
-                if (key === 'id')    return [key, value];
                 // generate encrypted data using iv+aesKey+datainBytes 
                 return Promise.all([key, 
                     crypto.subtle.encrypt({
@@ -182,11 +185,10 @@ export function encrypt(secret, publicKey) {
             })));
             // arraybuffer to base64
             for (let [key, buffer] of Object.entries(secret)) {
-                if (key !== 'id') { 
-                    const encryptedBytes = new Uint8Array(buffer);
-                    secret[key] = Uint8ArrayToBase64(encryptedBytes);
-                }
+                const encryptedBytes = new Uint8Array(buffer);
+                secret[key] = Uint8ArrayToBase64(encryptedBytes);
             }
+            if (bundle) resolve({secret});
             publicKey = await importCryptoKey(publicKey);
             aesAlg.iv = iv;
             let dKey = await wrapDkey(publicKey, aesKey, iv);

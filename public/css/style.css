@@ -69,9 +69,10 @@ input[type] {
     height: 300px;
     width: 300px;
 }
-#profile-logo {
-    background-color: rgb(0, 188, 245);
+.profile-logo {
+    background-color: rgb(117, 184, 247);
     padding: 5px;
+    margin: 2px;
     border-radius: 20px;
 }
 body {
