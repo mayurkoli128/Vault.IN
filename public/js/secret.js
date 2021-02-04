@@ -1,4 +1,14 @@
-import { addSecret, deleteSecret, getSecret, getAllSecret, updateSecret, shareSecret, unshareSecret, getOwners} from '../API/server.js';
+import { 
+	addSecret, 
+	deleteSecret, 
+	getSecret, 
+	getAllSecret, 
+	updateSecret, 
+	shareSecret, 
+	unshareSecret, 
+	getOwners,
+	changeRights,
+} from '../API/server.js';
 
 const rights = {
 	0: "Read",
@@ -16,14 +26,39 @@ window.shareSecret = async function() {
 	try {
 		const res = await shareSecret(secretId, username, rights);
 		// add the user here...
-		msg.style.display = "none";
 		whoHasAccess(secretId);
 	} catch (error) {
 		console.log(error);
 		msg.innerHTML = error.response.message;
 		msg.style.display = "block";
+		setTimeout(() => {
+			msg.style.display="none";
+		}, 4*1000);
 	}
 };
+window.changeRights = async function(username) {
+	let msg = document.getElementById('shareSecretHelp'),
+	secretId = document.getElementById('record-id').getAttribute('data-content'),
+	e = document.getElementById(username),
+	rights = e.options[e.selectedIndex].value;
+	e.disabled=true;
+	try {
+		//change user rights...
+		await changeRights(rights, username, secretId);
+		setTimeout(() => {
+			e.disabled=false;
+		}, 1*1000);
+	} catch (error) {
+		console.log(error);
+		msg.innerHTML = error.response.message;
+		msg.style.display = "block";
+		e.disabled=false;
+		setTimeout(() => {
+			msg.style.display="none";
+		}, 4*1000);
+	}
+
+}
 window.whoHasAccess = async function (id) {
 	let e = document.getElementById('whoHasAccess'), list = "";
 	const {user, owners} = await getOwners(id);
@@ -45,7 +80,7 @@ window.whoHasAccess = async function (id) {
 		list += `<tr>
 			<td scope="row"><span class="profile-logo">${logo}</span>${owner.username}</td>
 			<td>
-				<select ${disabled}>
+				<select id="${owner.username}" onchange="changeRights(this.id)" ${disabled}>
 				${options}
 				</select>
 			</td>

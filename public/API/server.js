@@ -56,6 +56,10 @@ export async function updateSecret(secret, secretId, username) {
     secret = await encrypt(secret, user.publicKey, {aesKey: aesKey, iv: iv});
     return makeRequest({method: "PATCH", url: `${db}/secrets/${secretId}/data`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret.secret});
 }
+export async function changeRights(rights, username, secretId) {
+    let metadata = {friendUsername: username, rights: rights};
+    return makeRequest({method: "PATCH", url: `${db}/secrets/${secretId}/metadata`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: metadata});
+}
 export async function shareSecret(secretId, username, rights) {
     // request for public key.
     username = (username != ''? username: 'n0').trim();
