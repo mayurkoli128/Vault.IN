@@ -128,6 +128,9 @@
             person
             </span>Secrets</h3>
           <table class="table table-striped table-hover" style="font-size: smaller;">
+            <div id="system-msg" role="alert" disabled>
+            
+            </div>
             <thead>
               <tr>
                 <th scope="col">TITLE</th>
@@ -157,6 +160,10 @@
           </button>
         </div>
         <div class="modal-body">
+          <div id="add-secret-msg" role="alert" disabled>
+            
+          </div>
+
           <form action="#" id="add-secret">
 
             <div class="form-group">
@@ -223,6 +230,7 @@
           </span>
         </div>
         <div class="modal-body">
+          
           <nav>
             
             <ul class="nav nav-tabs" id="nav-tab">
@@ -238,7 +246,11 @@
           </nav>
 
           <div class="tab-content" id="nav-tabContent">
+            
             <div class="tab-pane fade in active" id="nav-details">
+              <div id="show-secret-details-msg" role="alert" disabled>
+                
+              </div>
               <form action="#" id="update-secret">
 
                 <div class="form-group">
@@ -283,7 +295,7 @@
               </form>
             </div>
             <div class="tab-pane" id="nav-access-secret">
-              <div class="alert alert-danger alert-dismissible" id="shareSecretHelp" style="display: none;">
+              <div id="show-secret-share-details-msg" role="alert" disabled>
                 
               </div>
 
@@ -464,11 +476,11 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="alert alert-warning" role="alert">
-            <span class="material-icons" style="vertical-align: bottom;">
-              warning
-            </span>
-            Please note that these operation may take time.(up to your data size)
+          <div class="alert alert-info">
+            <strong>Info!</strong> please set <i>Strong Password</i> a password that is reasonably difficult to guess by someone in a short.
+          </div>
+          <div id="change-password-msg" role="alert" disabled>
+            
           </div>
 
           <form class="form-inline" id="change-password-form" action="#">

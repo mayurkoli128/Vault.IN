@@ -10,7 +10,8 @@ form.addEventListener('submit', async(event)=> {
     let user={
       username: e[0].value,
       password: e[1].value,
-      confirmPassword: e[2].value
+      confirmPassword: e[2].value,
+      avatar: getRandomColor(),
     };
     try { 
       const res = await addUser(user);
@@ -27,3 +28,11 @@ form.addEventListener('submit', async(event)=> {
     }
 });
 
+function getRandomColor() {
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+}

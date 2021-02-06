@@ -4,6 +4,7 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {auth} = require('../middleware/auth');
+const { use } = require('express/lib/router');
 
 // @type    GET
 // @route   /api/users/:username
@@ -15,7 +16,7 @@ router.get('/:username', [auth], async(req, res)=> {
     if (!user) {
         return res.status(404).json({ok: false, message: "Username not found."});
     }
-    return res.status(200).json({ok: true, message: "success", user: req.user, friend: user});
+    res.status(200).json({ok: true, message: "success", user: req.user, friend: user});
 });
 
 // @type    PATCH
@@ -26,8 +27,8 @@ router.patch('/edit-account/password', [auth], async(req, res)=> {
     let user = req.user;
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
-    await User.findAndModify({id: user.id}, {password: password});
-    res.status(200).json({ok: true, message: 'Password reset successfully'});;
+    await User.findAndModify({id: user.id}, {password: password, privateKey: req.body.privateKey});
+    res.status(200).json({ok: true, message: 'Password reset successfully.'});;
 });
 
 // @type    PATCH

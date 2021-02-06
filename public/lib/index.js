@@ -71,16 +71,19 @@ export async function unwrapPrivateKey(wrappedKey) {
     const wrappedKeyBuffer = bytesToArrayBuffer(base64ToUint8Array(wrappedKey.substr(60)));
     return window.crypto.subtle.unwrapKey("jwk", wrappedKeyBuffer, unwrappingKey, aesAlg, rsaAlg, true, ["unwrapKey"]); 
 }
+export async function wrapPrivateKey(privateKey) {
+    const salt = window.crypto.getRandomValues(new Uint8Array(32));
+    const wrappingKey = await genAesKey(salt);
+    // wrap private key
+    aesAlg.iv = crypto.getRandomValues(new Uint8Array(12));
+    const wrappedKey = await crypto.subtle.wrapKey("jwk", privateKey, wrappingKey, aesAlg);
+    return  Uint8ArrayToBase64(salt)+Uint8ArrayToBase64(aesAlg.iv)+Uint8ArrayToBase64(new Uint8Array(wrappedKey));
+}
 export function generateRSAKey() {
     return new Promise(async (resolve, reject)=> {
         let keyPair = await crypto.subtle.generateKey(rsaAlg, true, ["wrapKey", "unwrapKey"]);
-        // Aes-Key
-        const salt = window.crypto.getRandomValues(new Uint8Array(32));
-        const wrappingKey = await genAesKey(salt);
-        // wrap private key
-        aesAlg.iv = crypto.getRandomValues(new Uint8Array(12));
-        const wrappedKey = await crypto.subtle.wrapKey("jwk", keyPair.privateKey, wrappingKey, aesAlg);
-        keyPair.privateKey =  Uint8ArrayToBase64(salt)+Uint8ArrayToBase64(aesAlg.iv)+Uint8ArrayToBase64(new Uint8Array(wrappedKey));
+        // export private key
+        keyPair.privateKey = await wrapPrivateKey(keyPair.privateKey);
         // export public key
         let portableJWK = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
         keyPair.publicKey = btoa((JSON.stringify(portableJWK)));

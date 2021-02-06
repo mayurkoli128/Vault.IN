@@ -70,9 +70,9 @@ input[type] {
     width: 300px;
 }
 .profile-logo {
-    background-color: rgb(117, 184, 247);
     padding: 5px;
     margin: 2px;
+    color: white;
     border-radius: 20px;
 }
 body {

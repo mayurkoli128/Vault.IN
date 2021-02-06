@@ -9,6 +9,7 @@ import {
 	getOwners,
 	changeRights,
 } from '../API/server.js';
+import {show} from '../partials/messages.js';
 
 const rights = {
 	0: "Read",
@@ -20,48 +21,46 @@ window.shareSecret = async function() {
 	let username = document.getElementById('friend-username').value,
 	e = document.getElementById('friend-rights'),
 	rights = e.options[e.selectedIndex].value,
-	msg = document.getElementById('shareSecretHelp'),
 	secretId = document.getElementById('record-id').getAttribute('data-content');
 
 	try {
 		const res = await shareSecret(secretId, username, rights);
 		// add the user here...
+		show(res.response.message, "success", "show-secret-share-details-msg");
 		whoHasAccess(secretId);
 	} catch (error) {
 		console.log(error);
-		msg.innerHTML = error.response.message;
-		msg.style.display = "block";
-		setTimeout(() => {
-			msg.style.display="none";
-		}, 4*1000);
+		show(error.response.message, "danger", "show-secret-share-details-msg");
 	}
 };
-window.changeRights = async function(username) {
-	let msg = document.getElementById('shareSecretHelp'),
-	secretId = document.getElementById('record-id').getAttribute('data-content'),
-	e = document.getElementById(username),
+window.unshareSecret = async function(friendName) {
+	let secretId = document.getElementById('record-id').getAttribute('data-content');
+	try {
+		const res = await unshareSecret(secretId, friendName);
+	} catch (error) {
+		
+	}
+}
+// change user rights
+window.changeRights = async function(friendName) {
+	let secretId = document.getElementById('record-id').getAttribute('data-content'),
+	e = document.getElementsByName(friendName)[0],
 	rights = e.options[e.selectedIndex].value;
 	e.disabled=true;
 	try {
 		//change user rights...
-		await changeRights(rights, username, secretId);
-		setTimeout(() => {
-			e.disabled=false;
-		}, 1*1000);
+		const res = await changeRights(rights, friendName, secretId);
+		show(res.response.message, "success", "show-secret-share-details-msg");
 	} catch (error) {
 		console.log(error);
-		msg.innerHTML = error.response.message;
-		msg.style.display = "block";
-		e.disabled=false;
-		setTimeout(() => {
-			msg.style.display="none";
-		}, 4*1000);
+		show(error.response.message, "danger", "show-secret-share-details-msg");
 	}
-
+	e.disabled=false;
 }
 window.whoHasAccess = async function (id) {
 	let e = document.getElementById('whoHasAccess'), list = "";
-	const {user, owners} = await getOwners(id);
+	try {
+		const {user, owners} = await getOwners(id);
 	owners.forEach((owner)=> {
 		// create logo...
 		let logo = owner.username[0]+owner.username[1], options="", disabled="";
@@ -77,20 +76,19 @@ window.whoHasAccess = async function (id) {
 			disabled="disabled";
 		}
 		// create list
+
 		list += `<tr>
-			<td scope="row"><span class="profile-logo">${logo}</span>${owner.username}</td>
+			<td scope="row"><span class="profile-logo" style="background-color: ${owner.avatar}"> ${logo}</span>${owner.username}</td>
 			<td>
-				<select id="${owner.username}" onchange="changeRights(this.id)" ${disabled}>
+				<select name="${owner.username}" onchange="changeRights(this.name);" ${disabled}>
 				${options}
 				</select>
 			</td>
 			<td>
 				<abbr title="unshare secret" style="text-decoration: none; border: none;"> 
-				<button type="submit" style="padding: 0; border: none; background: none;">
-				<span
+				<button name="${owner.username}" onclick="unshareSecret(this.name)" 
 					class="material-icons btn btn-light" style="vertical-align: middle; cursor: pointer; user-select: none;" ${disabled}>
 					remove_circle_outline
-				</span>
 				</button>
 				</abbr>
 			</td>
@@ -108,19 +106,21 @@ window.whoHasAccess = async function (id) {
 			</td>
 			<td>
 			<abbr title="share secret" style="text-decoration: none; border: none;"> 
-				<button type="submit" style="padding: 0; border: none; background: none;" onclick="shareSecret()"> 
-					<span
-					class="material-icons btn btn-light" style="vertical-align: middle; cursor: pointer; user-select: none;">
-					add_circle_outline
-					</span>
+				<button onclick="shareSecret()"
+				class="material-icons btn btn-light" style="vertical-align: middle; cursor: pointer; user-select: none;">
+				add_circle_outline
 				</button>
 			</abbr>
 			</td>
 		</tr>`;
 
 	e.innerHTML = list;
+	viewVault();
+	} catch (error) {
+		show("Something failed", "danger", "system-msg");
+		console.log(error);
+	}
 }
-
 // add secret
 let insertForm = document.getElementById('add-secret');
 insertForm.addEventListener('submit', async (event) => {
@@ -137,13 +137,13 @@ insertForm.addEventListener('submit', async (event) => {
 	username = username.substr(10);
 	try {
 		let res = await addSecret(secret, username);
-		if (res.response.ok) {
-			document.getElementsByClassName('close')[0].click();
-			insertForm.reset();
-			viewVault();
-		}
+		show(res.response.message, "success", "add-secret-msg");
+		document.getElementsByClassName('close')[0].click();
+		insertForm.reset();
+		viewVault();
 	} catch (error) {
 		// ohh no! something went wrong....
+		show(error.response.message, "danger", "system-msg");
 		console.log(error);
 	}
 });
@@ -155,6 +155,7 @@ window.deleteSecret = async function (id) {
 		if (res.response.ok)	viewVault();
 	} catch (error) {
 		// ohh no! something went wrong....
+		show(error.response.message, "danger", "system-msg");
 		console.log(error);
 	}
 }
@@ -177,6 +178,7 @@ window.decryptSecret = async function (id) {
 		whoHasAccess(id);
 		$('#update-secret-modal').modal('show');
 	} catch (error) {
+		show("Something failed!", "danger", "system-msg");
 		console.log(error);
 	}
 }
@@ -204,6 +206,7 @@ rwForm.addEventListener('submit', async (event) => {
 		}
 	} catch (error) {
 		// ohh no! something went wrong....
+		show(error.response.message, "danger", "system-msg");
 		console.log(error);
 	}
 });
@@ -214,34 +217,94 @@ rwForm.addEventListener('input', () => {
 // view complete vault
 window.viewVault = async function () {
 	try {
-		let res = await getAllSecret();
-		let secrets = res.response.secrets, all = "";
-		secrets.forEach((secret) => {
+		let {secrets, user} = await getAllSecret();
+		let all = "";
+		for (let i = 0; i < secrets.length; i++) {
+			const {owners} = await getOwners(secrets[i].id);
+			// create logo for first three users....
+			let ownersLogo="", others="", names=[];
+			for (let i = 0; i < owners.length; i++) {
+				// create logo...
+				let logo = owners[i].username[0]+owners[i].username[1];
+				logo = logo.toUpperCase();
+				if (i > 2) {
+					names.push(owners[i].username);
+				} else {
+					ownersLogo += `<abbr title="${owners[i].username}" style="cursor: text ;text-decoration: none; border: none;"> <span class="profile-logo" style="font-size: 10px ;background-color: ${owners[i].avatar}"> ${logo} </span></abbr>`;
+				}
+			}
+			if (names.length)
+				others = `<abbr title="${names.join(', ')}" style="cursor: text ;text-decoration: none; border: none;"><span class="profile-logo" style="font-size: 10px ;background-color: grey"> +${names.length} </span></abbr>`;
+
+			secrets[i].lastModifiedAt = timeSince(new Date(secrets[i].lastModifiedAt));
 			all += `<tr class="table-row">
-                <td onclick="decryptSecret(this.id)" id="${secret.id}"  style="cursor: pointer;"> 
+                <td onclick="decryptSecret(this.id)" id="${secrets[i].id}"  style="cursor: pointer;"> 
                 <span class="material-icons" style="vertical-align: bottom;">text_snippet</span>
-				${secret.title}</td>
-				<td>${secret.lastModifiedAt.slice(0, -22)}-${res.response.username}</td>
+				${secrets[i].title}</td>
+				<td>${secrets[i].lastModifiedAt} - ${user}</td>
 				
-                <td>Who has access</td>
+				<td scope="row">
+					${ownersLogo + others}
+				</td>
+
                 <td  style="cursor: pointer;">
                   <div class="btn-group">
                     <span class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       more_vert
                     </span>
                     <div class="dropdown-menu">
-                      <li><a class="dropdown-item" name="${secret.id}" onclick="decryptSecret(this.name)">Show</a></li>
-                      <li><a class="dropdown-item" onclick="deleteSecret(this.name);" data-toggle="modal" data-target="#confirm-delet" name=${secret.id}>Delete</a></li>
+                      <li><a class="dropdown-item" name="${secrets[i].id}" onclick="decryptSecret(this.name)">Show</a></li>
+                      <li><a class="dropdown-item" onclick="deleteSecret(this.name);" data-toggle="modal" data-target="#confirm-delet" name=${secrets[i].id}>Delete</a></li>
                     </div>
                   </div>
                 </td>
               </tr>`;
-		});
+		}
 		const tbody = document.getElementById('all-secrets');
 		tbody.innerHTML = all;
 	} catch (error) {
 		// ohh no! something went wrong....
-		console.log(error)
+		show(error, "danger", "system-msg");
+		console.log(error);
 	}
 }
 viewVault();
+
+function timeSince(date) {
+	let val; 
+	
+	let seconds = Math.floor((new Date() - date) / 1000);
+  
+	let interval = seconds / 31536000;
+  
+	if (interval > 1) {
+	  val = Math.floor(interval);
+	  if (val == 1)	return "a year ago";
+	  else return val + " years ago";
+	}
+	interval = seconds / 2592000;
+	if (interval > 1) {
+	  val = Math.floor(interval);
+	  if (val == 1)	return "a month ago";
+	  else return val + " months ago";
+	}
+	interval = seconds / 86400;
+	if (interval > 1) {
+	  val = Math.floor(interval);
+	  if (val == 1)	return "a day ago";
+	  else return val + " days ago";
+	}
+	interval = seconds / 3600;
+	if (interval > 1) {
+	  val = Math.floor(interval);
+	  if (val == 1)	return "an hour ago";
+	  else return val + " hours ago";
+	}
+	interval = seconds / 60;
+	if (interval > 1) {
+	  val = Math.floor(interval);
+	  if (val == 1)	return "a minute ago";
+	  else return val + " minutes ago";
+	}
+	return "a few seconds ago";
+  }

@@ -1,26 +1,26 @@
 <% if(typeof err != 'undefined' && err != ''){%>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <%= err%>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= err%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>  
+  <%}%>
+  
+  <% if(typeof success_msg != 'undefined' && success_msg != ''){%>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= success_msg %>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>  
-<%}%>
-
-<% if(typeof success_msg != 'undefined' && success_msg != ''){%>
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <%= success_msg %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>  
-<%}%>
-
-<% if(typeof info != 'undefined' && info != '') {%>
-<div class="alert alert-info alert-dismissible fade show" role="alert">
-    <%= info %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>  
-<%}%>
+  <%}%>
+  
+  <% if(typeof info != 'undefined' && info != '') {%>
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <%= info %>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>  
+  <%}%>

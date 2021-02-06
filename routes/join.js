@@ -72,7 +72,7 @@ router.post('/register', async(req, res) => {
         return res.status(409).json({ok: false, message: 'Sorry! Username already taken.'});
     }
     //if valid create user object.
-    user = new User(_.pick(req.body, ['username', 'password', 'publicKey', 'privateKey']));
+    user = new User(_.pick(req.body, ['username', 'password', 'publicKey', 'privateKey', 'avatar']));
     //create hash of password.
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.password, salt);

@@ -1,5 +1,5 @@
 {
-    "DB_NAME": "keeper",
+    "DB_NAME": "VaultIN",
     "PORT": "8080",
     "DB_HOST": "localhost",
     "NODE_ENV": "development",
