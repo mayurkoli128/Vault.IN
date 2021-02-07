@@ -1,6 +1,7 @@
 const connection = require('../startup/db');
 const Data = require('../models/secretRecord');
 const Metadata = require('../models/metadata');
+const SecretRecord = require('../models/secretRecord');
 require('dotenv').config();
 
 class Secret {
@@ -91,4 +92,35 @@ Secret.findAndModify = (filters, secret)=> {
         });
     });
 }
+Secret.unshareOperation = (bundle)=> {
+    return new Promise((resolve, reject)=> {
+        connection.beginTransaction(async (err)=> {
+            if (err)    reject(err);
+            try {
+                // delete friend from database...
+                let result = await Metadata.delete({secretId: bundle.secretId, userId: bundle.friendId});
+                let dKeys = bundle.dKeys;
+                // update dKey for remaining users...
+                let arr = Object.entries(dKeys).map(([id, key])=> {
+                    return Promise.all([Metadata.findAndModify({secretId: bundle.secretId, userId: id}, {dKey: key})]);
+                });
+                result = await Promise.all(arr);
+                // update secret data...
+                result = await SecretRecord.findAndModify({id: bundle.secretId}, bundle.secret);
+                connection.commit((err)=> {
+                    if (err) {
+                        connection.rollback(function() {
+                            reject(error);
+                        });
+                    }
+                    resolve('Transaction Complete');
+                });
+            } catch (error) {
+                connection.rollback(function() {
+                    reject(error);
+                });
+            }
+        });
+    });
+};
 module.exports = Secret;

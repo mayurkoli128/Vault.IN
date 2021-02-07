@@ -1,3 +1,4 @@
+const { Err } = require('joi/lib/errors');
 const { meta } = require('joi/lib/types/symbol');
 const connection = require('../startup/db');
 require('dotenv').config();
@@ -47,7 +48,7 @@ Metadata.delete = (filters)=> {
         });
     });
 }
-Metadata.findAndModify = (filters, secret)=> {
+Metadata.findAndModify = (filters, metadata)=> {
     return new Promise((resolve, reject)=>{
         let query=`UPDATE SECRET SET ? WHERE `;
         if (filters && typeof filters == 'object') {
@@ -55,7 +56,7 @@ Metadata.findAndModify = (filters, secret)=> {
                 return encodeURIComponent(key) + '="' + (filters[key]) + '"';
             }).join('&&');
         }
-        connection.query(query, secret, (err, result)=>{
+        connection.query(query, metadata, (err, result)=>{
             if (err)    reject(err);
             else resolve(result);
         });

@@ -134,7 +134,6 @@ export async function unwrapDkey(privateKey, dKey) {
     const iv = base64ToUint8Array(dKey.substr(0, 16));
     const wrappedKey = bytesToArrayBuffer(base64ToUint8Array(dKey.substr(16)));
     const aesKey = await crypto.subtle.unwrapKey("jwk", wrappedKey, privateKey, {name: "RSA-OAEP"}, aesAlg, true, ["encrypt", "decrypt"]);
-
     return {aesKey: aesKey, iv: iv};
 }
 export async function wrapDkey(publicKey, aesKey, iv) {
@@ -165,17 +164,12 @@ export function decrypt(secret, dKey, privateKey) {
     });
     
 }
-export function encrypt(secret, publicKey, bundle) {
+export function getAeskey() {
+    return crypto.subtle.generateKey(aesAlg, true, ['encrypt', 'decrypt']);
+}
+export function encrypt(secret, iv, aesKey) {
     return new Promise(async(resolve, reject)=> {
         try {
-            let iv, aesKey;
-            if (bundle) {
-                iv = bundle.iv;
-                aesKey = bundle.aesKey;
-            } else {
-                iv = crypto.getRandomValues(new Uint8Array(12));
-                aesKey = await crypto.subtle.generateKey(aesAlg, true, ['encrypt', 'decrypt']);
-            }
             // The secret is encrypted using AES-GCM-256 with randomly generated intermediate key.
             secret = Object.fromEntries(await Promise.all(Object.entries(secret).map(([key, value])=> {
                 // generate encrypted data using iv+aesKey+datainBytes 
@@ -191,11 +185,7 @@ export function encrypt(secret, publicKey, bundle) {
                 const encryptedBytes = new Uint8Array(buffer);
                 secret[key] = Uint8ArrayToBase64(encryptedBytes);
             }
-            if (bundle) resolve({secret});
-            publicKey = await importCryptoKey(publicKey);
-            aesAlg.iv = iv;
-            let dKey = await wrapDkey(publicKey, aesKey, iv);
-            resolve({secret: secret, dKey: dKey});
+            resolve(secret);
         } catch (error) {
             reject(error);
         }

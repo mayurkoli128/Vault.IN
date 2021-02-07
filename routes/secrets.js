@@ -151,7 +151,7 @@ router.get('/owners/:secretId', [auth], async (req, res)=> {
     if (!yourSecret) {
         return res.status(405).json({ok: false, message:'You are not allow to access the secret.'});
     }
-    const owners = (await Secret.find({secretId: req.params.secretId}, ["rights", "username", "publicKey", "avatar"]));
+    const owners = (await Secret.find({secretId: req.params.secretId}, ["rights", "username", "publicKey", "avatar", "USER.id"]));
     res.status(200).json({ok: true, message: 'Found', owners: owners, user: {username: user.username, rights: yourSecret.rights}});
 });
 
@@ -183,7 +183,7 @@ router.post('/share', [auth], async(req, res)=> {
     await metadata.save();
     res.status(200).json({ok: true, message: `You just shared a secret with ${friend.username}.`});
 });
-router.post('/unshare', [auth], async (req, res)=> {
+router.patch('/unshare', [auth], async (req, res)=> {
     // check the secret exist or not...
     const user = req.user;
     let secret = (await SecretRecord.find({id: req.body.secretId}, ["title", "id"]))[0];
@@ -198,20 +198,20 @@ router.post('/unshare', [auth], async (req, res)=> {
     if (yourSecret.rights < rights.SHARE) {
         return res.status(405).json({ok: false, message: "Sorry! you can't unshare the secret."})
     }
-    if (req.body.userId == user.id) {
-        return res.status(405).json({ok: false, message: "Sorry! you can't unshare with yourself."});
-    }
-    let friend = await User.find({id: req.body.userId}, ["username", "id"]);
+    let friend = await User.find({username: req.body.friendName}, ["username", "id"]);
     if (!friend) {
         return res.status(404).json({ok: false, message: "Friend not found."});
     }
-    let friendSecret = (await Secret.find({secretId: req.body.secretId, userId: friend.id}, ["rights"]))[0];
-    if (!friendSecret || friendSecret.rights < rights.READ) {
-        return res.status(405).json({ok: false, message:'Your friend is not allow to access the secret.'});
+    if (friend.id == user.id) {
+        return res.status(405).json({ok: false, message: "Sorry! you can't unshare with yourself."});
     }
-    if (yourSecret.rights < rights.SHARE) {
-        return res.status(405).json({ok: false, message: "Sorry! you can't unshare the secret."});
-    }
-    res.status(200).json({ok: false, message: "You can unshare"});
+    delete req.body.dKeys[friend.username];
+    req.body.friendId = friend.id;
+    // start atomic operation
+    // 1) delete ratnu from record association
+    // 2) change dKeys for all the 
+    // 3) change secret data
+    await Secret.unshareOperation(req.body);
+    res.status(200).json({ok: true, message: `You just unshared a secret with ${friend.username}.`});
 });
 module.exports = router;

@@ -37,8 +37,12 @@ window.unshareSecret = async function(friendName) {
 	let secretId = document.getElementById('record-id').getAttribute('data-content');
 	try {
 		const res = await unshareSecret(secretId, friendName);
+		whoHasAccess(secretId);
+		viewVault();
+		show(res.response.message, "success", "show-secret-share-details-msg");
 	} catch (error) {
-		
+		console.log(error);
+		show(error.response.message, "danger", "show-secret-share-details-msg");
 	}
 }
 // change user rights
@@ -165,6 +169,7 @@ window.decryptSecret = async function (id) {
 	let status = !document.getElementById('decryption').checked;
 	try {
 		let {secret, title, rights} = await getSecret(id, status);
+		if (status)	rights = 0;
 		var e = rwForm.elements;
 		e[0].value = secret.login;
 		e[0].disabled= (rights == 0);
