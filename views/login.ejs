@@ -36,9 +36,6 @@
                 <div class="form-group">
                   <input type="password" name="password" placeholder="password" id="password"
                     class="form-control form-control-lg" autocomplete="off" required />
-                  <span class="material-icons field-icon">
-                    visibility
-                  </span>
                 </div>
               </div>
               <div class="col-lg-10 offset-lg-1">
@@ -57,16 +54,6 @@
       </div>
     </div>
   </div>
-  <script>
-    let eye = document.getElementsByClassName('field-icon');
-    eye[0].addEventListener('click', () => {
-      if (eye[0].innerHTML == 'visibility') {
-        eye[0].innerHTML = "visibility_off";
-      } else {
-        eye[0].innerHTML = "visibility";
-      }
-    });
-  </script>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="/js/login.js" type="module"></script>

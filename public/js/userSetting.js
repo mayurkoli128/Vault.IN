@@ -32,7 +32,7 @@ let timerId;
 export function startTimer(timeout) {
     timerId = setTimeout(() => {
         window.location = `${db}/logout`;
-    }, 1000*10*timeout);
+    }, 1000*60*timeout);
 }
 export function stopTimer(timeout) {
     clearTimeout(timerId);

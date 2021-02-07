@@ -51,11 +51,6 @@ export function genPasswordHash(data) {
         
     });
 }
-// public key;
-export function exportCryptoKey(key) {
-    return window.crypto.subtle.exportKey("jwk", key);
-}
-// public key;
 export function importCryptoKey(portableJWK) {
     portableJWK = JSON.parse(atob(portableJWK));
     return crypto.subtle.importKey( "jwk", portableJWK, rsaAlg, true, ["wrapKey"]);

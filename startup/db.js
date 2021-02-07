@@ -1,16 +1,11 @@
 // Load module mysql connection
 var mysql = require('mysql');
+var { database } = require('../config/defult');
 require('dotenv').config();
 
-var connection      =    mysql.createConnection({
-    connectionLimit : 10,
-    host     : process.env.DB_HOST,
-    user     : process.env.DB_USER,
-    password : process.env.DB_PASS,
-    database : process.env.DB_NAME,
-    debug    :  false,
-});    
-if (connection) {
-    console.log('connected to DB')
-}
+var connection = mysql.createConnection(database);    
+connection.connect((err)=> {
+    if (err)    throw err;
+    else console.log('Connected to DB');
+});
 module.exports = connection;

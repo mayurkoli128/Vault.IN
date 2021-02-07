@@ -87,7 +87,7 @@ export async function changeMasterPassword(currUser, password) {
     // retrive private key of user..
     const {user} = await retrieveUser(currUser);
     // unwrap it using current password
-    const privateKey = await unwrapPrivateKey(user.privateKey);
+    let privateKey = await unwrapPrivateKey(user.privateKey);
     await genCryptoKey(password);
     privateKey = await wrapPrivateKey(privateKey);
     const passwordHash = await genPasswordHash(password);   

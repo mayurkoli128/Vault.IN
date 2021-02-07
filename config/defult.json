@@ -1,9 +1,0 @@
-{
-    "DB_NAME": "VaultIN",
-    "PORT": "8080",
-    "DB_HOST": "localhost",
-    "NODE_ENV": "development",
-    "DB_USER":"user",
-    "DB_PASS":"pass",
-    "COOKIE_DECRYPT_SECRETE" : "unsecured_key"
-}

@@ -184,7 +184,7 @@
             <div class="form-group">
               <input type="password" name="password" placeholder="Type or Generate Password" id="s-password"
                 class="form-control form-control-lg" autocomplete="off" required />
-              <span class="material-icons field-icon">
+              <span class="material-icons field-icon" onclick="passwordEye(this, `s-password`)">
                 visibility
               </span>
             </div>
@@ -268,7 +268,7 @@
                   <label for="u-password" class="fs1">PASSWORD</label>
                   <input type="password" name="password" placeholder="Type or Generate Password" id="u-password"
                     class="form-control form-control-lg" autocomplete="off" required />
-                  <span class="material-icons field-icon">
+                  <span class="material-icons field-icon" onclick="passwordEye(this, `u-password`)">
                     visibility
                   </span>
                 </div>
@@ -536,25 +536,15 @@
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
   <script type="text/javascript">
-    let eye = document.getElementsByClassName('field-icon');
-    eye[0].addEventListener('click', () => {
-      if (eye[0].innerHTML == 'visibility') {
-        eye[0].innerHTML = 'visibility_off';
-        document.getElementById('s-password').type = "text";
-      } else {
-        eye[0].innerHTML = 'visibility';
-        document.getElementById('s-password').type = "password";
+    function passwordEye(eye, id) {
+      if(eye.innerHTML == 'visibility_off') {
+        eye.innerHTML = 'visibility';
+        document.getElementById(id).type = "password";
+        return;
       }
-    });
-    eye[1].addEventListener('click', () => {
-      if (eye[1].innerHTML == "visibility") {
-        eye[1].innerHTML = "visibility_off";
-        document.getElementById('u-password').type = "text";
-      } else {
-        eye[1].innerHTML = "visibility";
-        document.getElementById('u-password').type = "password";
-      }
-    });
+      eye.innerHTML = 'visibility_off';
+      document.getElementById(id).type = "text";
+    };
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
