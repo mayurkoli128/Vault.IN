@@ -26,7 +26,7 @@ class User {
         let token = jwt.sign({
             username: this.username,
             is2faAuthenticated: is2faAuthenticated,
-        }, process.env.JWT_PRIVATE_TOKEN, {expiresIn: expiresIn});
+        }, process.env.JWT_PRIVATE_TOKEN || "UNSECURED_JWT_PRIVATE_TOKEN", {expiresIn: expiresIn});
         return token;
     }
 }

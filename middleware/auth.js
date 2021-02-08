@@ -12,7 +12,7 @@ module.exports.auth = async function(req, res, next, omitSecondFactor=false) {
         return res.status(401).json({ok: false, message: 'Unauthorized'});
     }
     try {
-        const {username, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
+        const {username, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN||"UNSECURED_JWT_PRIVATE_TOKEN");;
         const user = await User.find({username: username}, ["id", "username", "publicKey", "privateKey"]);
         if (!user) {
             return res.status(401).json({ok: false, message: 'Sorry, you are not allowed to access this page'});

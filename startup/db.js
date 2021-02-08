@@ -1,7 +1,6 @@
 // Load module mysql connection
 var mysql = require('mysql');
-var { database } = require('../config/defult');
-require('dotenv').config();
+var { database } = require('../config/default');
 
 var connection = mysql.createConnection(database);    
 connection.connect((err)=> {

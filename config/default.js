@@ -6,5 +6,5 @@ module.exports = {
         password: process.env.DATABASE_PASSWORD || 'root128',
         database: process.env.DATABASE_NAME || 'VaultIN'
     },
-    port: process.env.PORT || 4000
+    port: process.env.PORT || 8080
 };
