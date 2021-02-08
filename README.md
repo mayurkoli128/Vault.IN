@@ -57,7 +57,9 @@ npm install
 ```
 
 ### 5.) Setting Config.
+```
 if you look at config/default.js, change accordingly. & create a database from database/db.sql (Copy all these queries and execute.) **For a production scenario, you should store this key as an environment variable and not along with source code.**
+```
 
 
 ### 6.) Start the Server.
