@@ -34,7 +34,7 @@ module.exports.forwardAuthenticate = async function(req, res, next) {
         return next();
     }
     try {
-        const {username, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN);;
+        const {username, is2faAuthenticated} = jwt.verify(token, process.env.JWT_PRIVATE_TOKEN || "UNSECURED_JWT_PRIVATE_TOKEN");
         const user = await User.find({username: username});
 
         if (!user) {

@@ -4,7 +4,7 @@ USE VaultIN;
 
 create TABLE USER (
     id int8 auto_increment primary key,
-    username varchar(1024) not null UNIQUE,
+    username varchar(256) not null UNIQUE,
     password VARCHAR(1024) not null,
     privateKey VARCHAR(4372) not null,
     publicKey VARCHAR(1040) not null,

@@ -57,12 +57,8 @@ npm install
 ```
 
 ### 5.) Setting Config.
-<<<<<<< HEAD
-if you look at config/default.js, change accordingly. & create a database from database/db.sql (Copy all these queries and execute.) **For a production scenario, you should store this key as an environment variable and not along with source code.**
-=======
 
-   if you look at config/default.js, change accordingly. & create a database from database/db.sql (Copy all these queries and execute.) **For a production scenario, you should store this key as an environment variable and not along with source code.**
->>>>>>> 34426e373300d126e256cb72d7e639aeadf543f3
+   if you look at config/default.js, change accordingly. & create a database using database/db.sql file. (Copy all these queries and execute.) **For a production scenario, you should store this key as an environment variable and not along with source code.**
 
 
 ### 6.) Start the Server.
@@ -73,8 +69,4 @@ This will launch the Node server on port 8080. If that port is busy, you can set
 
 Open up your browser and head over to:
 
-<<<<<<< HEAD
 * http://localhost:8080/
-=======
-* http://localhost:8080/
->>>>>>> 34426e373300d126e256cb72d7e639aeadf543f3
