@@ -72,11 +72,12 @@ export async function addSecret(secret, username) {
 export async function updateSecret(secret, secretId, username) {
     // username, publicKey...
     username=username.trim();
-    const {user} = (await retrieveUser(username)),
-    {dKey} = (await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`})).response.secret;
+    secretId=secretId.trim();
+    const {user} = (await retrieveUser(username));
+    const {dKey} = (await makeRequest({method: "GET", url: `${db}/secrets/${secretId}`})).response.secret;
     const {aesKey, iv} = await unwrapDkey(user.privateKey, dKey);
-    secret = await encrypt(secret, user.publicKey, {aesKey: aesKey, iv: iv});
-    return makeRequest({method: "PATCH", url: `${db}/secrets/${secretId}/data`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret.secret});
+    secret = await encrypt(secret, iv, aesKey);
+    return makeRequest({method: "PATCH", url: `${db}/secrets/${secretId}/data`, headers: {"Content-Type": "application/json;charset=UTF-8"}, data: secret});
 }
 export async function changeRights(rights, friendName, secretId) {
     const metadata = {friendName: friendName, rights: rights};
