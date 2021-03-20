@@ -1,5 +1,3 @@
-const { Err } = require('joi/lib/errors');
-const { meta } = require('joi/lib/types/symbol');
 const connection = require('../startup/db');
 require('dotenv').config();
 

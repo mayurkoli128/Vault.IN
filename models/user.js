@@ -14,7 +14,7 @@ class User {
     }
     save = ()=>{
         return new Promise((resolve, reject)=> {
-            const query = `INSERT INTO USER SET ?`
+            const query = `INSERT INTO USER SET ?`;
             connection.query(query, this, (err, result)=> {
                 if (err)    reject(err);
                 resolve (result);
