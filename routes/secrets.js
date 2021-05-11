@@ -209,7 +209,7 @@ router.patch('/unshare', [auth], async (req, res)=> {
     req.body.friendId = friend.id;
     // start atomic operation
     // 1) delete ratnu from record association
-    // 2) change dKeys for all the 
+    // 2) change dKeys 
     // 3) change secret data
     await Secret.unshareOperation(req.body);
     res.status(200).json({ok: true, message: `You just unshared a secret with ${friend.username}.`});

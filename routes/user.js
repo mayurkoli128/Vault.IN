@@ -4,7 +4,6 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {auth} = require('../middleware/auth');
-const { use } = require('express/lib/router');
 
 // @type    GET
 // @route   /api/users/:username
