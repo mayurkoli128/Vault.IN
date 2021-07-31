@@ -12,6 +12,7 @@
 
     <title>Home page</title>
     <!-- Bootstrap core CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css">
   </head>
@@ -30,12 +31,6 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-              <li class="nav-item">
-                <a class="nav-link" href="#" style="color: white">Features</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" style="color: white">Pricing</a>
-              </li>
               <li class="nav-item">
                 <a class="nav-link" href="/join/login" style="color: white">Login</a>
               </li>
@@ -56,16 +51,25 @@
               <span><strong>Vault.IN</strong> is A password manager, digital vault, secure digital vault. Vault.IN remembers all your passwords for you to help keep account information safe.</span>
               
               <div class="btn-element">
-                <button type="button" class="btn btn-primary btn-lg" onclick="Redirect()">SignUp for free</button>
-                <button type="button" class="btn btn-danger btn-lg">Large button</button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="Redirect1()">Create Account<span
+                  class="material-icons" style="vertical-align: bottom;">
+                  chevron_right
+                </span></button>
+                <button type="button" class="btn btn-danger btn-lg" onclick="Redirect2()">Log in<span
+                  class="material-icons" style="vertical-align: bottom;">
+                  login
+                </span></button>
               </div>
           </div>
         </div>
       </div>
   
     <script>
-        function Redirect() {
+        function Redirect1() {
           window.location = "/join/register";
+        }
+        function Redirect2() {
+          window.location = "/join/login";
         }
     </script>
 
